@@ -8,7 +8,7 @@ from random import choices
 from pickle import dump, load
 from os.path import join, dirname, basename
 
-from utils import random_cipher_key, decrypt
+from utils import random_cipher_key, decrypt, InvalidInputError
 
 
 class NgramType(Enum):
@@ -114,6 +114,17 @@ class Ngram:
 
         return fitness
 
+    @property
+    def ngram_type(self):
+        return self.__ngram_type
+
+    @ngram_type.setter
+    def ngram_type(self, ngram_type):
+        if ngram_type in NgramType.values():
+            self.__ngram_type = ngram_type
+        else:
+            raise InvalidInputError("ngram_type", ngram_type, NgramType)
+
 
 def generate_population(
         cipher_text: str, n_population: int, ngram: Ngram
@@ -153,9 +164,10 @@ def select_parent(population_fitness: dict) -> str:
     Returns:
         str: The selected parent chosen based on fitness scores.
     """
-    values = np.array(list(population_fitness.values()))
-    total_fitness = np.sum(values)
-    selection_probability = values / total_fitness
+    values = list(population_fitness.values())
+    values_arr = np.array(values)
+    total_fitness = np.sum(values_arr)
+    selection_probability = values_arr / total_fitness
 
     parent = choices(list(population_fitness),
                      weights=selection_probability,

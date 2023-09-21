@@ -1,6 +1,24 @@
 from re import match
 from random import shuffle
 from string import ascii_uppercase
+from enum import Enum
+
+
+class InvalidInputError(ValueError):
+    def __init__(
+            self,
+            var_name: str,
+            var: any,
+            var_class: Enum
+    ) -> None:
+        """Raised when a variable is expected to have a valid value from
+        the Crossover, Mutation, or NgramType Enum classes, but the
+        provided value does not match any of the expected valid values.
+        """
+        super().__init__(
+            f'Invalid {var_name}: "{var}".It should be one of '
+            + ", ".join(f'"{value}"' for value in var_class.values()) + "."
+        )
 
 
 def random_cipher_key() -> str:
