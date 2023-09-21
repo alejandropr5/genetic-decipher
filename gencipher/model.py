@@ -1,12 +1,12 @@
-from random import random
-from cProfile import Profile
 import pstats
 from numpy import inf
+from random import random
+from cProfile import Profile
 
-from fitness import select_parent, generate_population, Ngram
 from utils import decrypt
-from crossover import Crossover
 from mutation import Mutation
+from crossover import Crossover
+from fitness import select_parent, generate_population, Ngram
 
 
 class GeneticDecipher(Crossover, Mutation):

@@ -1,7 +1,7 @@
 from re import match
+from enum import Enum
 from random import shuffle
 from string import ascii_uppercase
-from enum import Enum
 
 
 class InvalidInputError(ValueError):
