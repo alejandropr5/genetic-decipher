@@ -48,7 +48,7 @@ def encrypt(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
-    cipher_text = "StringIO()"
+    cipher_text = ""
     for char in text:
         if match('[A-Z]', char):
             cipher_text += cipher_key[(ord(char) - ord('A'))]

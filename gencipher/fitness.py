@@ -70,6 +70,56 @@ def frequency_to_log_probability(ngrams_dictionary: dict[str, int]) -> None:
     ngrams_dictionary[0] = log10(0.01 / total_frequency)
 
 
+def select_parent(population_fitness: dict) -> str:
+    """Selects a parent from a population based on their fitness scores
+    using a weighted random selection.
+
+    Args:
+        population_fitness (dict): A dictionary containing fitness
+        scores for individuals in the population.
+
+    Returns:
+        str: The selected parent chosen based on fitness scores.
+    """
+    values = list(population_fitness.values())
+    values_arr = np.array(values)
+    total_fitness = np.sum(values_arr)
+    selection_probability = values_arr / total_fitness
+
+    parent = choices(list(population_fitness),
+                     weights=selection_probability,
+                     k=1)
+
+    return parent[0]
+
+
+def ngrams_folder_to_dictionary_folder(
+        source_folder: str | Path,
+        output_folder: str | Path
+) -> None:
+    """Takes all n-gram score files (.txt) from the source folder,
+    converts them into n-gram dictionaries with logarithmic
+    probabilities and saves them in the output folder.
+
+    Args:
+        source_path (str | Path): The path to the source folder
+        containing n-gram score text files.
+        output_path (str | Path): The path to the output folder where
+        n-gram dictionaries will be saved.
+    """
+    files = iglob(join(source_folder, "*.txt"))
+
+    for file in files:
+        file_name = basename(file).split(".")[0]
+
+        ngrams_dictionary = ngrams_file_to_dictionary(file)
+        frequency_to_log_probability(ngrams_dictionary)
+        file = join(output_folder, f"{file_name}.dict")
+
+        with open(file, "wb") as file_out:
+            dump(ngrams_dictionary, file_out)
+
+
 class Ngram:
     def __init__(self, ngram_type: str) -> None:
         """Initializes an Ngram object for a specified n-gram type.
@@ -125,82 +175,29 @@ class Ngram:
         else:
             raise InvalidInputError("ngram_type", ngram_type, NgramType)
 
+    def generate_population(
+            self, cipher_text: str, n_population: int
+    ) -> dict[str, float]:
+        """Generates a population of random cipher keys and computes their
+        fitness scores.
 
-def generate_population(
-        cipher_text: str, n_population: int, ngram: Ngram
-) -> dict[str, float]:
-    """Generates a population of random cipher keys and computes their
-    fitness scores.
+        Args:
+            cipher_text (str): The cipher text to be decrypted by the
+            generated cipher keys.
+            n_population (int): The number of cipher keys to generate in the
+            population.
 
-    Args:
-        cipher_text (str): The cipher text to be decrypted by the
-        generated cipher keys.
-        n_population (int): The number of cipher keys to generate in the
-        population.
-        ngram (Ngram): An Ngram object containing n-gram scores for
-        fitness evaluation.
+        Returns:
+            dict[str, float]: _description_
+        """
+        population = [random_cipher_key() for _ in range(n_population)]
 
-    Returns:
-        dict[str, float]: _description_
-    """
-    population = [random_cipher_key() for _ in range(n_population)]
+        population_fitness = {}
+        for key in population:
+            decipher_text = decrypt(cipher_text, key)
+            population_fitness[key] = self.compute_fitness(decipher_text)
 
-    population_fitness = {}
-    for cipher_key in population:
-        decipher_text = decrypt(cipher_text, cipher_key)
-        population_fitness[cipher_key] = ngram.compute_fitness(decipher_text)
-
-    return population_fitness
-
-
-def select_parent(population_fitness: dict) -> str:
-    """Selects a parent from a population based on their fitness scores
-    using a weighted random selection.
-
-    Args:
-        population_fitness (dict): A dictionary containing fitness
-        scores for individuals in the population.
-
-    Returns:
-        str: The selected parent chosen based on fitness scores.
-    """
-    values = list(population_fitness.values())
-    values_arr = np.array(values)
-    total_fitness = np.sum(values_arr)
-    selection_probability = values_arr / total_fitness
-
-    parent = choices(list(population_fitness),
-                     weights=selection_probability,
-                     k=1)
-
-    return parent[0]
-
-
-def ngrams_folder_to_dictionary_folder(
-        source_folder: str | Path,
-        output_folder: str | Path
-) -> None:
-    """Takes all n-gram score files (.txt) from the source folder,
-    converts them into n-gram dictionaries with logarithmic
-    probabilities and saves them in the output folder.
-
-    Args:
-        source_path (str | Path): The path to the source folder
-        containing n-gram score text files.
-        output_path (str | Path): The path to the output folder where
-        n-gram dictionaries will be saved.
-    """
-    files = iglob(join(source_folder, "*.txt"))
-
-    for file in files:
-        file_name = basename(file).split(".")[0]
-
-        ngrams_dictionary = ngrams_file_to_dictionary(file)
-        frequency_to_log_probability(ngrams_dictionary)
-        file = join(output_folder, f"{file_name}.dict")
-
-        with open(file, "wb") as file_out:
-            dump(ngrams_dictionary, file_out)
+        return population_fitness
 
 
 def main():
@@ -227,7 +224,7 @@ def test():
 
     text = "Obmmp, Xpemq!"
 
-    pop_fitness = generate_population(text, 20, ngram)
+    pop_fitness = ngram.generate_population(text, 20)
 
     print(pop_fitness)
 

@@ -6,7 +6,7 @@ from cProfile import Profile
 from utils import decrypt
 from mutation import Mutation
 from crossover import Crossover
-from fitness import select_parent, generate_population, Ngram
+from fitness import select_parent, Ngram
 
 
 class GeneticDecipher(Crossover, Mutation):
@@ -14,8 +14,8 @@ class GeneticDecipher(Crossover, Mutation):
             self,
             ngram_type : str = "quadgram",
             mutation_type : str = "scramble",
-            mutation_rate : float = 0.01,
             crossover_type : str = "full",
+            mutation_rate : float = 0.01,
             crossover_rate : float = 0.6
     ) -> None:
         self.mutation_rate = mutation_rate
@@ -79,9 +79,8 @@ class GeneticDecipher(Crossover, Mutation):
     ) -> str:
         self.cipher_text = cipher_text
         self.n_population = n_population
-        self.population = generate_population(self.cipher_text,
-                                              self.n_population,
-                                              self.ngram)
+        self.population = self.ngram.generate_population(self.cipher_text,
+                                                         self.n_population)
         self.history = {"best_key": [],
                         "deciphered_text": []}
         best_key = ("", -inf)
