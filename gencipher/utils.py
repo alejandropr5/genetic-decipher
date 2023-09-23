@@ -48,6 +48,31 @@ def encrypt(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
+    cipher_text = "StringIO()"
+    for char in text:
+        if match('[A-Z]', char):
+            cipher_text += cipher_key[(ord(char) - ord('A'))]
+        elif match('[a-z]', char):
+            cipher_text += cipher_key[(ord(char) - ord('a'))].lower()
+        else:
+            cipher_text += char
+
+    return cipher_text
+
+
+def encrypt_backup(text: str, cipher_key: str) -> str:
+    """Substitutes characters in the input text using a provided
+    substitution cipher key.
+
+    Args:
+        text (str): The input text to be encrypted.
+        cipher_key (str): The substitution cipher key used for character
+        mapping.
+
+    Returns:
+        str: The text with characters substituted based on the provided
+        cipher key.
+    """
     cipher_text = StringIO()
     for char in text:
         if match('[A-Z]', char):
@@ -60,7 +85,7 @@ def encrypt(text: str, cipher_key: str) -> str:
     return cipher_text.getvalue()
 
 
-def decrypt(text: str, cipher_key: str) -> str:
+def decrypt_backup(text: str, cipher_key: str) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -87,6 +112,31 @@ def decrypt(text: str, cipher_key: str) -> str:
             deciphered_text.write(char)
 
     return deciphered_text.getvalue()
+
+
+def decrypt(text: str, cipher_key: str) -> str:
+    """Substitutes characters in the input text using a provided
+    substitution cipher key.
+
+    Args:
+        text (str): The input text to be decrypted.
+        cipher_key (str): The substitution cipher key used for character
+        mapping.
+
+    Returns:
+        str: The text with characters substituted based on the provided
+        cipher key.
+    """
+    deciphered_text = ""
+    for char in text:
+        if char in ascii_uppercase:
+            deciphered_text += chr(cipher_key.index(char.upper()) + ord('A'))
+        elif char in ascii_lowercase:
+            deciphered_text += chr(cipher_key.index(char.upper()) + ord('a'))
+        else:
+            deciphered_text += char
+
+    return deciphered_text
 
 
 def main():
