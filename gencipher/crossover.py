@@ -1,5 +1,6 @@
 from enum import Enum
 from random import randint
+from abc import ABC, abstractmethod
 
 from utils import InvalidInputError
 
@@ -13,13 +14,14 @@ class CrossoverType(Enum):
     OX1 = "order-one"
     PMX = "partially-mapped"
     CX = "cycle"
+    FX = "full"
 
     @classmethod
     def values(cls):
         return (member.value for member in cls)
 
 
-class Crossover:
+class Crossover(ABC):
     @staticmethod
     def OX1(parent1: str, parent2: str) -> str:
         """Performs order-one crossover (OX1) on two parent strings to
@@ -132,6 +134,10 @@ class Crossover:
 
         return "".join(child)
 
+    @abstractmethod
+    def FX(self):
+        ...
+
     def _set_crossover(self, crossover_type):
         if crossover_type == CrossoverType.CX.value:
             self.crossover = self.CX
@@ -139,13 +145,15 @@ class Crossover:
             self.crossover = self.OX1
         elif crossover_type == CrossoverType.PMX.value:
             self.crossover = self.PMX
+        elif crossover_type == CrossoverType.FX.value:
+            self.crossover = self.FX
         else:
             raise InvalidInputError("crossover", crossover_type, CrossoverType)
 
 
 def main():
-    list1 = "123456789"
-    list2 = "937826514"
+    list1 = "LKJHGFDSAQWERTYUIOPMNBVCXZ"
+    list2 = "ASDFGHJKLMNBVCXZPOIUYTREWQ"
 
     print(list(list1))
     print(list(list2))

@@ -3,7 +3,6 @@ import numpy as np
 from enum import Enum
 from glob import iglob
 from math import log10
-from io import StringIO
 from pathlib import Path
 from random import choices
 from pickle import dump, load

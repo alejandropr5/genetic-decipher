@@ -1,7 +1,8 @@
 from re import match
 from enum import Enum
+from io import StringIO
 from random import shuffle
-from string import ascii_uppercase
+from string import ascii_uppercase, ascii_lowercase
 
 
 class InvalidInputError(ValueError):
@@ -47,16 +48,16 @@ def encrypt(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
-    cipher_text = ""
+    cipher_text = StringIO()
     for char in text:
         if match('[A-Z]', char):
-            cipher_text += cipher_key[(ord(char) - ord('A'))]
+            cipher_text.write(cipher_key[(ord(char) - ord('A'))])
         elif match('[a-z]', char):
-            cipher_text += cipher_key[(ord(char) - ord('a'))].lower()
+            cipher_text.write(cipher_key[(ord(char) - ord('a'))].lower())
         else:
-            cipher_text += char
+            cipher_text.write(char)
 
-    return cipher_text
+    return cipher_text.getvalue()
 
 
 def decrypt(text: str, cipher_key: str) -> str:
@@ -72,16 +73,20 @@ def decrypt(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
-    deciphered_text = ""
+    deciphered_text = StringIO()
     for char in text:
-        if match('[A-Z]', char):
-            deciphered_text += chr(cipher_key.index(char.upper()) + ord('A'))
-        elif match('[a-z]', char):
-            deciphered_text += chr(cipher_key.index(char.upper()) + ord('a'))
+        if char in ascii_uppercase:
+            deciphered_text.write(
+                chr(cipher_key.index(char.upper()) + ord('A'))
+            )
+        elif char in ascii_lowercase:
+            deciphered_text.write(
+                chr(cipher_key.index(char.upper()) + ord('a'))
+            )
         else:
-            deciphered_text += char
+            deciphered_text.write(char)
 
-    return deciphered_text
+    return deciphered_text.getvalue()
 
 
 def main():
