@@ -8,7 +8,7 @@ from random import choices
 from pickle import dump, load
 from os.path import join, dirname, basename
 
-from utils import random_cipher_key, decrypt, InvalidInputError
+from gencipher.utils import random_cipher_key, decrypt, InvalidInputError
 
 
 class NgramType(Enum):
@@ -158,9 +158,9 @@ class Ngram:
         for i in range(len(uppercase_only_text) - self.ngram_len + 1):
             ngram = uppercase_only_text[i : i + self.ngram_len]
             if ngram in self.scores:
-                fitness += self.scores[ngram]
+                fitness += self.scores.get(ngram)
             else:
-                fitness += self.scores[0]
+                fitness += self.scores.get(0)
 
         return fitness
 
@@ -208,34 +208,5 @@ def main():
     ngrams_folder_to_dictionary_folder(folder_path, output_folder)
 
 
-def test():
-    ngram = Ngram("bigram")
-
-    print(ngram.scores)
-
-    print(ngram.ngram_len)
-
-    print(ngram.compute_fitness("hello"))
-
-    print(ngram.scores['HE']
-          + ngram.scores['EL']
-          + ngram.scores['LL']
-          + ngram.scores['LO'])
-
-    text = "Obmmp, Xpemq!"
-
-    pop_fitness = ngram.generate_population(text, 20)
-
-    print(pop_fitness)
-
-    parent = select_parent(pop_fitness)
-
-    print("parent:", parent)
-
-    print("MONOGRAM" in list(NgramType))
-    print(NgramType.values())
-
-
 if __name__ == "__main__":
-    # main()
-    test()
+    main()

@@ -1,12 +1,10 @@
-import pstats
 from numpy import inf
 from random import random
-from cProfile import Profile
 
-from utils import decrypt
-from mutation import Mutation
-from crossover import Crossover
-from fitness import select_parent, Ngram
+from gencipher.utils import decrypt
+from gencipher.mutation import Mutation
+from gencipher.crossover import Crossover
+from gencipher.fitness import select_parent, Ngram
 
 
 class GeneticDecipher(Crossover, Mutation):
@@ -26,7 +24,7 @@ class GeneticDecipher(Crossover, Mutation):
         self.ngram = Ngram(ngram_type)
 
     def FX(self, winner: str, loser: str) -> str:
-        target_fitness = self.population[winner]
+        target_fitness = self.population.get(winner)
         target_key = list(winner)
         source_key = list(loser)
 
@@ -81,11 +79,12 @@ class GeneticDecipher(Crossover, Mutation):
         self.n_population = n_population
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
-        self.history = {"best_key": [],
-                        "deciphered_text": []}
+        self.history = {"key": [],
+                        "score": [],
+                        "text": []}
         best_key = ("", -inf)
 
-        for idx in range(max_iter):
+        for _ in range(max_iter):
             self.population = self.evolve_population(self.population)
             best_idx_key = max(self.population.items(), key=lambda x: x[1])
 
@@ -93,35 +92,8 @@ class GeneticDecipher(Crossover, Mutation):
                 best_key = best_idx_key
             deciphered_text = decrypt(self.cipher_text, best_key[0])
 
-            self.history["best_key"].append(best_key)
-            self.history["deciphered_text"].append(deciphered_text)
+            self.history["key"].append(best_key[0])
+            self.history["score"].append(best_key[1])
+            self.history["text"].append(deciphered_text)
 
         return deciphered_text
-
-
-def main():
-    with Profile() as pr:
-        gencipher = GeneticDecipher(ngram_type="quintgram",
-                                    crossover_type="full",
-                                    crossover_rate=0.6,
-                                    mutation_type="scramble")
-        cipher_text = """
-        Zc hdzq tr Zdytzir Gqstzir Zqltgtir, sezzdhgql ea nmq Dlztqr ea nmq
-        Helnm, Fqhqldu ea nmq Aquty Uqftehr, dhg uecdu rqlodhn ne nmq nliq
-        qzvqlel, Zdlsir Dilqutir. Adnmql ne d zilgqlqg reh, mirvdhg ne d
-        zilgqlqg ktaq. Dhg T ktuu mdoq zc oqhfqdhsq, th nmtr utaq el nmq hqyn.
-        """
-
-        deciphered_text = gencipher.decipher(cipher_text, max_iter=20)
-
-    stats = pstats.Stats(pr)
-    stats.sort_stats(pstats.SortKey.TIME)
-    stats.print_stats()
-
-    print(deciphered_text)
-    # print()
-    # print(gencipher.history)
-
-
-if __name__ == "__main__":
-    main()

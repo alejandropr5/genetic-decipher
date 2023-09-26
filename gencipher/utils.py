@@ -137,24 +137,3 @@ def decrypt(text: str, cipher_key: str) -> str:
             deciphered_text += char
 
     return deciphered_text
-
-
-def main():
-    cipher_key = random_cipher_key()
-
-    print(ascii_uppercase)
-    print(cipher_key)
-
-    text = "Hello World!!"
-
-    cipher_text = encrypt(text, cipher_key)
-
-    deciphered_text = decrypt(cipher_text, cipher_key)
-
-    print(text)
-    print(cipher_text)
-    print(deciphered_text)
-
-
-if __name__ == "__main__":
-    main()

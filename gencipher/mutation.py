@@ -1,7 +1,7 @@
 from enum import Enum
 from random import sample, randint, shuffle
 
-from utils import InvalidInputError
+from gencipher.utils import InvalidInputError
 
 
 class MutationType(Enum):
@@ -107,19 +107,3 @@ class Mutation:
             self.mutation = self.scramble
         else:
             raise InvalidInputError("mutation", mutation_type, MutationType)
-
-
-def main():
-    parent = list("123456789")
-
-    print(parent)
-    print()
-    mut = Mutation()
-    print(list(mut.insert(parent)))
-    print(list(mut.swap(parent)))
-    print(list(mut.inversion(parent)))
-    print(list(mut.scramble(parent)))
-
-
-if __name__ == "__main__":
-    main()

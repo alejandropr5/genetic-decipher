@@ -2,7 +2,7 @@ from enum import Enum
 from random import randint
 from abc import ABC, abstractmethod
 
-from utils import InvalidInputError
+from gencipher.utils import InvalidInputError
 
 
 class ParentsLengthError(ValueError):
@@ -149,27 +149,3 @@ class Crossover(ABC):
             self.crossover = self.FX
         else:
             raise InvalidInputError("crossover", crossover_type, CrossoverType)
-
-
-def main():
-    list1 = "LKJHGFDSAQWERTYUIOPMNBVCXZ"
-    list2 = "ASDFGHJKLMNBVCXZPOIUYTREWQ"
-
-    print(list(list1))
-    print(list(list2))
-    print()
-
-    cross = Crossover()
-    child_OX1 = cross.OX1(list1, list2)
-
-    child_PMX = cross.PMX(list1, list2)
-
-    child_CX = cross.CX(list1, list2)
-
-    print(list(child_OX1))
-    print(list(child_PMX))
-    print(list(child_CX))
-
-
-if __name__ == "__main__":
-    main()
