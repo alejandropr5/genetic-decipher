@@ -8,7 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 numpy = "^1.25.2"
-pandas = "^2.1.0"
+fastapi = "^0.103.1"
+uvicorn = "^0.23.2"
+fastapi-utils = "^0.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
