@@ -25,8 +25,8 @@ class GencipherController:
     def hi(self):
         return "Hi from GencipherController"
 
-    @router.post("/predict")
-    def predict(self, body: Body):
+    @router.post("/decipher")
+    def decipher(self, body: Body):
         cipher_text = body.cipher_text
         predictions = self.model.decipher(cipher_text)
         return {"predictions": predictions}
