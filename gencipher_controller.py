@@ -29,4 +29,4 @@ class GencipherController:
     def decipher(self, body: Body):
         cipher_text = body.cipher_text
         predictions = self.model.decipher(cipher_text)
-        return {"predictions": predictions}
+        return {"plain_text": predictions}
