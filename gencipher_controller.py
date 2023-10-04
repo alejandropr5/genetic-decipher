@@ -17,11 +17,11 @@ class ResponseBody(BaseModel):
     history: dict[str, list]
 
 
-router = InferringRouter()
-
-
 async def get_model(request: Request):
     return request.app.state.model
+
+
+router = InferringRouter()
 
 
 @cbv(router)
