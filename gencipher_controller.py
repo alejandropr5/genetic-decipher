@@ -8,8 +8,13 @@ from gencipher.model import GeneticDecipher
 
 class Body(BaseModel):
     cipher_text: str
-    max_iter: int
-    n_population: int
+    max_iter: int = 20
+    n_population: int = 100
+
+
+class ResponseBody(BaseModel):
+    plain_text: str
+    history: dict[str, list]
 
 
 router = InferringRouter()
@@ -32,4 +37,6 @@ class GencipherController:
         plain_text = self.model.decipher(cipher_text=body.cipher_text,
                                          max_iter=body.max_iter,
                                          n_population=body.n_population)
-        return {"plain_text": plain_text, "history": self.model.history}
+
+        return ResponseBody(plain_text=plain_text,
+                            history=self.model.history)
