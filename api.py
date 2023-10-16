@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from gencipher.model import GeneticDecipher
-from gencipher_controller import router as gencipher_router
+from routers.gencipher_controller import router as gencipher_router
 
 
 app = FastAPI()
@@ -29,8 +29,3 @@ def shutdown_event():
 
 
 app.include_router(gencipher_router, tags=["gencipher"], prefix="/gencipher")
-
-
-@app.get("/hi")
-def hi():
-    return {"message": "Hello World from the API"}
