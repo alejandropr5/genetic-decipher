@@ -26,7 +26,7 @@ class CrossoverType(Enum):
         Returns:
             Iterable[str]: An iterable containing the values of the
             CrossoverType enum as strings.
-        """        
+        """
         return (member.value for member in cls)
 
 
