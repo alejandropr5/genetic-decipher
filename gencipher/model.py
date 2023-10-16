@@ -10,17 +10,21 @@ from gencipher.fitness import select_parent, Ngram
 class GeneticDecipher(Crossover, Mutation):
     def __init__(
             self,
-            ngram_type : str = "quadgram",
-            mutation_type : str = "scramble",
-            crossover_type : str = "full",
-            mutation_rate : float = 0.01,
-            crossover_rate : float = 0.6
+            ngram_type : str = "quadgram"
     ) -> None:
-        self.mutation_rate = mutation_rate
-        self.crossover_rate = crossover_rate
+        """Initialize the GeneticDecipher class.
 
-        self._set_mutation(mutation_type)
-        self._set_crossover(crossover_type)
+        Args:
+            ngram_type (str, optional): The type of n-gram analysis to
+            be used. Defaults to "quadgram."
+
+        Summary:
+        The GeneticDecipher class applies a genetic algorithm for
+        cryptogram deciphering, using various strategies such as
+        crossover, mutation, and fitness evaluation based on n-gram
+        analysis. It aims to find the optimal decipher key for a
+        given cryptogram.
+        """
         self.ngram = Ngram(ngram_type)
 
     def FX(self, winner: str, loser: str) -> str:
@@ -111,16 +115,30 @@ class GeneticDecipher(Crossover, Mutation):
             self,
             cipher_text: str,
             max_iter: int = 20,
-            n_population : int = 100
+            n_population : int = 100,
+            mutation_type : str = "scramble",
+            crossover_type : str = "full",
+            mutation_rate : float = 0.01,
+            crossover_rate : float = 0.6
     ) -> str:
         """Deciphers a cryptogram using a genetic algorithm.
 
         Args:
-            cipher_text (str): The ciphertext to be decrypted.
+            cipher_text (str): The cryptogram to be deciphered.
             max_iter (int, optional): The maximum number of iterations
             for the genetic algorithm. Defaults to 20.
             n_population (int, optional): The size of the candidate
             population for each iteration. Defaults to 100.
+            mutation_type (str, optional): The type of mutation to be
+            applied in the genetic algorithm. Defaults to "scramble."
+            crossover_type (str, optional): The type of crossover to be
+            applied in the genetic algorithm. Defaults to "full."
+            mutation_rate (float, optional): The mutation rate,
+            affecting the likelihood of applying mutation. Defaults to
+            0.01.
+            crossover_rate (float, optional): The crossover rate,
+            affecting the likelihood of applying crossover. Defaults to
+            0.6.
 
         Returns:
             str: The deciphered plaintext obtained through the genetic
@@ -128,6 +146,11 @@ class GeneticDecipher(Crossover, Mutation):
         """
         self.cipher_text = cipher_text
         self.n_population = n_population
+        self._set_mutation(mutation_type)
+        self._set_crossover(crossover_type)
+        self.mutation_rate = mutation_rate
+        self.crossover_rate = crossover_rate
+
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
         self.history = {"key": [],
