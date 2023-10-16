@@ -3,7 +3,7 @@ from random import random
 
 from gencipher.utils import decrypt
 from gencipher.mutation import Mutation
-from gencipher.crossover import Crossover
+from gencipher.crossover import Crossover, ParentsLengthError
 from gencipher.fitness import select_parent, Ngram
 
 
@@ -24,6 +24,26 @@ class GeneticDecipher(Crossover, Mutation):
         self.ngram = Ngram(ngram_type)
 
     def FX(self, winner: str, loser: str) -> str:
+        """Performs a full crossover (FX) operation on two parent
+        strings to generate a child string.
+
+        Args:
+            winner (str): The parent with a higher fitness in solving
+            the cryptogram, used as the first parent for crossover.
+            loser (str): The parent with a lower fitness in solving the
+            cryptogram, used as the second parent for crossover.
+
+        Raises:
+            ParentsLengthError: Raised if the lengths of winner and
+            loser strings are not equal.
+
+        Returns:
+            str: The child string generated through the full crossover
+            operation.
+        """
+        if len(winner) != len(loser):
+            raise ParentsLengthError()
+
         target_fitness = self.population.get(winner)
         target_key = list(winner)
         source_key = list(loser)
@@ -42,7 +62,25 @@ class GeneticDecipher(Crossover, Mutation):
 
         return "".join(target_key)
 
-    def evolve_population(self, population: dict) -> dict:
+    def evolve_population(
+            self,
+            population: dict[str, float]
+    ) -> dict[str, float]:
+        """Evolves the population of candidate solutions through
+        crossover and mutation.
+
+        Args:
+            population (dict): A dictionary representing the current
+            population of candidate solutions, where keys are cipher
+            keys (strings) and values are their corresponding fitness
+            scores (float).
+
+        Returns:
+            dict: A new population of candidate solutions after applying
+            crossover and mutation, represented as a dictionary. Keys
+            are cipher keys (strings), and values are their updated
+            fitness scores (float).
+        """
         new_population = {}
         for _ in range(self.n_population):
             key1 = select_parent(population)
@@ -75,6 +113,19 @@ class GeneticDecipher(Crossover, Mutation):
             max_iter: int = 20,
             n_population : int = 100
     ) -> str:
+        """Deciphers a cryptogram using a genetic algorithm.
+
+        Args:
+            cipher_text (str): The ciphertext to be decrypted.
+            max_iter (int, optional): The maximum number of iterations
+            for the genetic algorithm. Defaults to 20.
+            n_population (int, optional): The size of the candidate
+            population for each iteration. Defaults to 100.
+
+        Returns:
+            str: The deciphered plaintext obtained through the genetic
+            algorithm.
+        """
         self.cipher_text = cipher_text
         self.n_population = n_population
         self.population = self.ngram.generate_population(self.cipher_text,

@@ -20,11 +20,18 @@ class NgramType(Enum):
 
     @classmethod
     def values(cls):
+        """Retrieve the values of the NgramType enum class.
+
+        Returns:
+            Iterable[str]: An iterable containing the values of the
+            NgramType enum as strings.
+        """
         return [member.value for member in cls]
 
 
 def ngrams_file_to_dictionary(
-    file_path: str | Path, sep=" "
+    file_path: str | Path,
+    sep=" "
 ) -> dict[str, int]:
     """Reads the content of a n-gram text file, where each line consists
     of an n-gram string and its associated frequency, and converts it
@@ -70,7 +77,7 @@ def frequency_to_log_probability(ngrams_dictionary: dict[str, int]) -> None:
     ngrams_dictionary[0] = log10(0.01 / total_frequency)
 
 
-def select_parent(population_fitness: dict) -> str:
+def select_parent(population_fitness: dict[str, float]) -> str:
     """Selects a parent from a population based on their fitness scores
     using a weighted random selection.
 
@@ -176,16 +183,17 @@ class Ngram:
             raise InvalidInputError("ngram_type", ngram_type, NgramType)
 
     def generate_population(
-            self, cipher_text: str, n_population: int
+            self, cipher_text: str,
+            n_population: int
     ) -> dict[str, float]:
-        """Generates a population of random cipher keys and computes their
-        fitness scores.
+        """Generates a population of random cipher keys and computes
+        their fitness scores.
 
         Args:
             cipher_text (str): The cipher text to be decrypted by the
             generated cipher keys.
-            n_population (int): The number of cipher keys to generate in the
-            population.
+            n_population (int): The number of cipher keys to generate in
+            the population.
 
         Returns:
             dict[str, float]: _description_

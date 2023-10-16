@@ -12,6 +12,12 @@ class MutationType(Enum):
 
     @classmethod
     def values(cls):
+        """Retrieve the values of the MutationType enum class.
+
+        Returns:
+            Iterable[str]: An iterable containing the values of the
+            MutationType enum as strings.
+        """
         return (member.value for member in cls)
 
 
@@ -96,7 +102,17 @@ class Mutation:
 
         return "".join(parent_list)
 
-    def _set_mutation(self, mutation_type):
+    def _set_mutation(self, mutation_type) -> None:
+        """Set the mutation function based on the provided mutation
+        type.
+
+        Args:
+            mutation_type (str): The mutation type as a string.
+
+        Raises:
+            InvalidInputError: Raised if the provided mutation_type is
+            not one of the valid mutation types defined in MutationType.
+        """
         if mutation_type == MutationType.INSERT.value:
             self.mutation = self.insert
         elif mutation_type == MutationType.INVERSION.value:

@@ -7,6 +7,9 @@ from gencipher.utils import InvalidInputError
 
 class ParentsLengthError(ValueError):
     def __init__(self) -> None:
+        """Raised when the lengths of parent strings for a crossover
+        operation are not equal.
+        """
         super().__init__("Parent strings must have equal lengths.")
 
 
@@ -18,6 +21,12 @@ class CrossoverType(Enum):
 
     @classmethod
     def values(cls):
+        """Retrieve the values of the CrossoverType enum class.
+
+        Returns:
+            Iterable[str]: An iterable containing the values of the
+            CrossoverType enum as strings.
+        """        
         return (member.value for member in cls)
 
 
@@ -32,8 +41,8 @@ class Crossover(ABC):
             parent2 (str): The second parent string used for crossover.
 
         Raises:
-            ParentsLengthError: Raised if the lengths of parent1 and parent2
-            are not equal.
+            ParentsLengthError: Raised if the lengths of parent1 and
+            parent2 are not equal.
 
         Returns:
             str: The child string generated through order-one crossover.
@@ -63,16 +72,16 @@ class Crossover(ABC):
 
     @staticmethod
     def PMX(parent1: str, parent2: str) -> str:
-        """Performs partially mapped crossover (PMX) on two parent strings
-        to generate a child string.
+        """Performs partially mapped crossover (PMX) on two parent
+        strings to generate a child string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
             parent2 (str): The second parent string used for crossover.
 
         Raises:
-            ParentsLengthError: Raised if the lengths of parent1 and parent2
-            are not equal.
+            ParentsLengthError: Raised if the lengths of parent1 and
+            parent2 are not equal.
 
         Returns:
             str: The child string generated through partially mapped
@@ -105,16 +114,16 @@ class Crossover(ABC):
 
     @staticmethod
     def CX(parent1: str, parent2: str) -> str:
-        """Performs cycle crossover (CX) on two parent strings to generate a
-        child string.
+        """Performs cycle crossover (CX) on two parent strings to
+        generate a child string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
             parent2 (str): The second parent string used for crossover.
 
         Raises:
-            ParentsLengthError: Raised if the lengths of parent1 and parent2
-            are not equal.
+            ParentsLengthError: Raised if the lengths of parent1 and
+            parent2 are not equal.
 
         Returns:
             str: The child string generated through cycle crossover.
@@ -135,8 +144,12 @@ class Crossover(ABC):
         return "".join(child)
 
     @abstractmethod
-    def FX(self):
-        ...
+    def FX(self, parent1: str, parent2: str) -> str:
+        """This method should implement the algorithm for a full
+        crossover function, combining attributes of both parent strings
+        to create a child.
+        """
+        pass
 
     def _set_crossover(self, crossover_type):
         if crossover_type == CrossoverType.CX.value:

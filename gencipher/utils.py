@@ -7,10 +7,10 @@ from string import ascii_uppercase, ascii_lowercase
 
 class InvalidInputError(ValueError):
     def __init__(
-            self,
-            var_name: str,
-            var: any,
-            var_class: Enum
+        self,
+        var_name: str,
+        var: any,
+        var_class: Enum
     ) -> None:
         """Raised when a variable is expected to have a valid value from
         the Crossover, Mutation, or NgramType Enum classes, but the
