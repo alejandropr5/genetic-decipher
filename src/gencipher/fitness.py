@@ -101,8 +101,8 @@ def select_parent(population_fitness: dict[str, float]) -> str:
 
 
 def ngrams_folder_to_dictionary_folder(
-        source_folder: str | Path,
-        output_folder: str | Path
+    source_folder: str | Path,
+    output_folder: str | Path
 ) -> None:
     """Takes all n-gram score files (.txt) from the source folder,
     converts them into n-gram dictionaries with logarithmic
@@ -128,17 +128,23 @@ def ngrams_folder_to_dictionary_folder(
 
 
 class Ngram:
-    def __init__(self, ngram_type: str) -> None:
+    def __init__(
+        self,
+        ngram_type: str,
+        scores_folder: str | Path
+    ) -> None:
         """Initializes an Ngram object for a specified n-gram type.
 
         Args:
             ngram_type (str): The type of n-gram to initialize. It must
             be one of the following valid values: "monogram", "bigram,"
             "trigram", "quadgram", or "quintgram".
+            scores_folder (str | Path): The path to the folder
+            containing the precomputed n-gram score pickled
+            dictionaries.
         """
         self.ngram_type = ngram_type
-        parent_folder = join(dirname(__file__), "..")
-        scores_folder = join(parent_folder, "ngrams_scores")
+
         file = join(scores_folder, f"english_{self.ngram_type}s.dict")
         with open(file, "rb") as file_in:
             self.scores = load(file_in)
