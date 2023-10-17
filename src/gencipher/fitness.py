@@ -209,9 +209,9 @@ class Ngram:
 
 
 def main():
-    parent_folder = join(dirname(__file__), "..")
-    folder_path = join(parent_folder, "ngrams_files")
-    output_folder = join(parent_folder, "ngrams_scores")
+    parent_folder = join(dirname(__file__), "../..")
+    folder_path = join(parent_folder, "data", "ngrams_files")
+    output_folder = join(parent_folder, "data", "ngrams_scores")
 
     ngrams_folder_to_dictionary_folder(folder_path, output_folder)
 
