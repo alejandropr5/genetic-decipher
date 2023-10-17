@@ -60,7 +60,7 @@ def encrypt(text: str, cipher_key: str) -> str:
     return cipher_text
 
 
-def encrypt_backup(text: str, cipher_key: str) -> str:
+def encrypt_deprecated(text: str, cipher_key: str) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -85,7 +85,7 @@ def encrypt_backup(text: str, cipher_key: str) -> str:
     return cipher_text.getvalue()
 
 
-def decrypt_backup(text: str, cipher_key: str) -> str:
+def decrypt_deprecated(text: str, cipher_key: str) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -98,20 +98,20 @@ def decrypt_backup(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
-    deciphered_text = StringIO()
+    plain_text = StringIO()
     for char in text:
         if char in ascii_uppercase:
-            deciphered_text.write(
+            plain_text.write(
                 chr(cipher_key.index(char.upper()) + ord('A'))
             )
         elif char in ascii_lowercase:
-            deciphered_text.write(
+            plain_text.write(
                 chr(cipher_key.index(char.upper()) + ord('a'))
             )
         else:
-            deciphered_text.write(char)
+            plain_text.write(char)
 
-    return deciphered_text.getvalue()
+    return plain_text.getvalue()
 
 
 def decrypt(text: str, cipher_key: str) -> str:
@@ -127,13 +127,13 @@ def decrypt(text: str, cipher_key: str) -> str:
         str: The text with characters substituted based on the provided
         cipher key.
     """
-    deciphered_text = ""
+    plain_text = ""
     for char in text:
         if char in ascii_uppercase:
-            deciphered_text += chr(cipher_key.index(char.upper()) + ord('A'))
+            plain_text += chr(cipher_key.index(char.upper()) + ord('A'))
         elif char in ascii_lowercase:
-            deciphered_text += chr(cipher_key.index(char.upper()) + ord('a'))
+            plain_text += chr(cipher_key.index(char.upper()) + ord('a'))
         else:
-            deciphered_text += char
+            plain_text += char
 
-    return deciphered_text
+    return plain_text
