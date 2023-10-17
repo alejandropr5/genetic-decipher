@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
 readme = "README.md"
+packages = [{include = "gencipher", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
