@@ -1,9 +1,11 @@
 [tool.poetry]
 name = "backend"
 version = "0.1.0"
-description = ""
+description = "cryptogram decoder API"
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
 readme = "README.md"
+homepage = ""
+repository = "https://github.com/alejandropr5/cryptogram-decoder/tree/main/backend"
 packages = [{include = "gencipher", from = "src"}]
 
 [tool.poetry.dependencies]
@@ -15,9 +17,37 @@ fastapi-utils = "^0.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
+pytest = "^7.4.2"
+mypy = "^1.6.0"
+flake8 = "^6.1.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[options.package_data]
+gencipher = "py.typed"
+
+[flake8]
+max-line-length = 79
+
+[tool.pytest.ini_options]
+addopts = "--cov=slapping"
+testpaths = [
+    "tests",
+]
+
+[tool.mypy]
+mypy_path = "src"
+check_untyped_defs = true
+disallow_any_generics = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+no_implicit_reexport = true
