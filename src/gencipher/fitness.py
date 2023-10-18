@@ -1,6 +1,5 @@
 from re import sub
 import numpy as np
-from enum import Enum
 from glob import iglob
 from math import log10
 from pathlib import Path
@@ -9,9 +8,10 @@ from pickle import dump, load
 from os.path import join, dirname, basename
 
 from gencipher.utils import random_cipher_key, decrypt, InvalidInputError
+from gencipher.utils import InputType
 
 
-class NgramType(Enum):
+class NgramType(InputType):
     MONOGRAM = "monogram"
     BIGRAM = "bigram"
     TRIGRAM = "trigram"
@@ -60,7 +60,9 @@ def ngrams_file_to_dictionary(
     return ngrams_dictionary
 
 
-def frequency_to_log_probability(ngrams_dictionary: dict[str, int]) -> None:
+def frequency_to_log_probability(
+        ngrams_dictionary: dict[str, int]
+) -> dict[str, float]:
     """Converts frequency values in the n-gram dictionary to logarithmic
     probabilities.
 
@@ -71,10 +73,12 @@ def frequency_to_log_probability(ngrams_dictionary: dict[str, int]) -> None:
     """
     total_frequency = sum(ngrams_dictionary.values())
 
+    prob_dictionary = {}
     for key, value in ngrams_dictionary.items():
-        ngrams_dictionary[key] = log10(value / total_frequency)
+        prob_dictionary[key] = log10(value / total_frequency)
 
-    ngrams_dictionary[0] = log10(0.01 / total_frequency)
+    prob_dictionary["0"] = log10(0.01 / total_frequency)
+    return prob_dictionary
 
 
 def select_parent(population_fitness: dict[str, float]) -> str:
@@ -120,11 +124,11 @@ def ngrams_folder_to_dictionary_folder(
         file_name = basename(file).split(".")[0]
 
         ngrams_dictionary = ngrams_file_to_dictionary(file)
-        frequency_to_log_probability(ngrams_dictionary)
+        prob_dictionary = frequency_to_log_probability(ngrams_dictionary)
         file = join(output_folder, f"{file_name}.dict")
 
         with open(file, "wb") as file_out:
-            dump(ngrams_dictionary, file_out)
+            dump(prob_dictionary, file_out)
 
 
 class Ngram:
@@ -169,11 +173,12 @@ class Ngram:
         fitness = 0.0
 
         for i in range(len(uppercase_only_text) - self.ngram_len + 1):
-            ngram = uppercase_only_text[i : i + self.ngram_len]
+            top = i + self.ngram_len
+            ngram = uppercase_only_text[i:top]
             if ngram in self.scores:
-                fitness += self.scores.get(ngram)
+                fitness += self.scores[ngram]
             else:
-                fitness += self.scores.get(0)
+                fitness += self.scores["0"]
 
         return fitness
 

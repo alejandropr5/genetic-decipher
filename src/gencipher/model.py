@@ -1,3 +1,4 @@
+from pathlib import Path
 from numpy import inf
 from random import random
 
@@ -10,7 +11,8 @@ from gencipher.fitness import select_parent, Ngram
 class GeneticDecipher(Crossover, Mutation):
     def __init__(
             self,
-            ngram_type : str = "quadgram"
+            ngram_type: str = "quadgram",
+            scores_folder: str | Path = "data/ngrams_scores"
     ) -> None:
         """Initialize the GeneticDecipher class.
 
@@ -25,7 +27,7 @@ class GeneticDecipher(Crossover, Mutation):
         analysis. It aims to find the optimal decipher key for a
         given cryptogram.
         """
-        self.ngram = Ngram(ngram_type)
+        self.ngram = Ngram(ngram_type, scores_folder)
 
     def FX(self, winner: str, loser: str) -> str:
         """Performs a full crossover (FX) operation on two parent
@@ -48,7 +50,7 @@ class GeneticDecipher(Crossover, Mutation):
         if len(winner) != len(loser):
             raise ParentsLengthError()
 
-        target_fitness = self.population.get(winner)
+        target_fitness = self.population[winner]
         target_key = list(winner)
         source_key = list(loser)
 
@@ -115,11 +117,11 @@ class GeneticDecipher(Crossover, Mutation):
             self,
             cipher_text: str,
             max_iter: int = 20,
-            n_population : int = 100,
-            mutation_type : str = "scramble",
-            crossover_type : str = "full",
-            mutation_rate : float = 0.01,
-            crossover_rate : float = 0.6
+            n_population: int = 100,
+            mutation_type: str = "scramble",
+            crossover_type: str = "full",
+            mutation_rate: float = 0.01,
+            crossover_rate: float = 0.6
     ) -> str:
         """Deciphers a cryptogram using a genetic algorithm.
 
@@ -153,9 +155,9 @@ class GeneticDecipher(Crossover, Mutation):
 
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
-        self.history = {"key": [],
-                        "score": [],
-                        "text": []}
+        self.history: dict[str, list[str | float]] = {"key": [],
+                                                      "score": [],
+                                                      "text": []}
         best_key = ("", -inf)
 
         for _ in range(max_iter):

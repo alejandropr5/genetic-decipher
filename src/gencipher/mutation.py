@@ -1,10 +1,9 @@
-from enum import Enum
 from random import sample, randint, shuffle
 
-from gencipher.utils import InvalidInputError
+from gencipher.utils import InvalidInputError, InputType
 
 
-class MutationType(Enum):
+class MutationType(InputType):
     INSERT = "insert"
     SWAP = "swap"
     INVERSION = "inversion"

@@ -1,8 +1,7 @@
-from enum import Enum
 from random import randint
 from abc import ABC, abstractmethod
 
-from gencipher.utils import InvalidInputError
+from gencipher.utils import InvalidInputError, InputType
 
 
 class ParentsLengthError(ValueError):
@@ -13,21 +12,11 @@ class ParentsLengthError(ValueError):
         super().__init__("Parent strings must have equal lengths.")
 
 
-class CrossoverType(Enum):
+class CrossoverType(InputType):
     OX1 = "order-one"
     PMX = "partially-mapped"
     CX = "cycle"
     FX = "full"
-
-    @classmethod
-    def values(cls):
-        """Retrieve the values of the CrossoverType enum class.
-
-        Returns:
-            Iterable[str]: An iterable containing the values of the
-            CrossoverType enum as strings.
-        """
-        return (member.value for member in cls)
 
 
 class Crossover(ABC):
@@ -94,7 +83,7 @@ class Crossover(ABC):
         start = randint(0, length)
         end = randint(start, length)
 
-        child = [None] * length
+        child = [""] * length
         mapping = {}
         for idx in range(start, end):
             child[idx] = parent1[idx]
@@ -103,12 +92,12 @@ class Crossover(ABC):
 
         for child_element, parent_element in mapping.items():
             parent2_idx = parent2.index(child_element)
-            if child[parent2_idx] is not None:
+            if child[parent2_idx] != "":
                 child[parent2.index(child[parent2_idx])] = parent_element
             else:
                 child[parent2_idx] = parent_element
 
-        child = map(lambda x, y: y if x is None else x, child, parent2)
+        child = list(map(lambda x, y: y if x is None else x, child, parent2))
 
         return "".join(child)
 
@@ -132,14 +121,14 @@ class Crossover(ABC):
             raise ParentsLengthError()
 
         length = len(parent1)
-        child = [None] * length
+        child = [""] * length
         start_pos = idx = randint(0, length)
 
         while idx != start_pos or not any(child):
             child[idx] = parent2[idx]
             idx = parent1.index(parent2[idx])
 
-        child = map(lambda x, y: y if x is None else x, child, parent1)
+        child = list(map(lambda x, y: y if x == "" else x, child, parent1))
 
         return "".join(child)
 

@@ -5,12 +5,24 @@ from random import shuffle
 from string import ascii_uppercase, ascii_lowercase
 
 
+class InputType(Enum):
+    @classmethod
+    def values(cls):
+        """Retrieve the values of the InputType enum class.
+
+        Returns:
+            Iterable[str]: An iterable containing the values of the
+            InputType enum as strings.
+        """
+        return [member.value for member in cls]
+
+
 class InvalidInputError(ValueError):
     def __init__(
         self,
         var_name: str,
-        var: any,
-        var_class: Enum
+        var: InputType,
+        var_class: type[InputType]
     ) -> None:
         """Raised when a variable is expected to have a valid value from
         the Crossover, Mutation, or NgramType Enum classes, but the
@@ -35,7 +47,7 @@ def random_cipher_key() -> str:
     return cipher_key_str
 
 
-def encrypt(text: str, cipher_key: str) -> str:
+def encrypt(text: str, cipher_key: str | list[str]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -60,7 +72,7 @@ def encrypt(text: str, cipher_key: str) -> str:
     return cipher_text
 
 
-def encrypt_deprecated(text: str, cipher_key: str) -> str:
+def encrypt_deprecated(text: str, cipher_key: str | list[str]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -85,7 +97,7 @@ def encrypt_deprecated(text: str, cipher_key: str) -> str:
     return cipher_text.getvalue()
 
 
-def decrypt_deprecated(text: str, cipher_key: str) -> str:
+def decrypt_deprecated(text: str, cipher_key: str | list[str]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -114,7 +126,7 @@ def decrypt_deprecated(text: str, cipher_key: str) -> str:
     return plain_text.getvalue()
 
 
-def decrypt(text: str, cipher_key: str) -> str:
+def decrypt(text: str, cipher_key: str | list[str]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
