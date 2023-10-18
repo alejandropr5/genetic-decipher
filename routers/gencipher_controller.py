@@ -10,10 +10,10 @@ class RequestBody(BaseModel):
     cipher_text: str
     max_iter: int = 20
     n_population: int = 100
-    mutation_type : str = "scramble"
-    crossover_type : str = "full"
-    mutation_rate : float = 0.01
-    crossover_rate : float = 0.6
+    mutation_type: str = "scramble"
+    crossover_type: str = "full"
+    mutation_rate: float = 0.01
+    crossover_rate: float = 0.6
 
 
 class ResponseBody(BaseModel):
