@@ -133,7 +133,7 @@ class Crossover(ABC):
         return "".join(child)
 
     @abstractmethod
-    def FX(self, parent1: str, parent2: str) -> str:
+    def FX(self, parent1: str, parent2: str) -> str:   # pragma: no cover
         """This method should implement the algorithm for a full
         crossover function, combining attributes of both parent strings
         to create a child.
