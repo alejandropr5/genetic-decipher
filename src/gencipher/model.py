@@ -102,7 +102,7 @@ class GeneticDecipher(Crossover, Mutation):
                 new_key = self.crossover(winner, loser)
                 new_text = decrypt(self.cipher_text, new_key)
                 new_fitness = self.ngram.compute_fitness(new_text)
-                if fitness_target > new_fitness:
+                if new_fitness < fitness_target:
                     new_key = winner
                     new_fitness = fitness_target
             if random() < self.mutation_rate:
