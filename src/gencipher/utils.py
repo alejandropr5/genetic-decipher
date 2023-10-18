@@ -72,7 +72,10 @@ def encrypt(text: str, cipher_key: str | list[str]) -> str:
     return cipher_text
 
 
-def encrypt_deprecated(text: str, cipher_key: str | list[str]) -> str:
+def encrypt_deprecated(
+    text: str,
+    cipher_key: str | list[str]
+) -> str:   # pragma: no cover
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -97,7 +100,10 @@ def encrypt_deprecated(text: str, cipher_key: str | list[str]) -> str:
     return cipher_text.getvalue()
 
 
-def decrypt_deprecated(text: str, cipher_key: str | list[str]) -> str:
+def decrypt_deprecated(
+    text: str,
+    cipher_key: str | list[str]
+) -> str:   # pragma: no cover
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
