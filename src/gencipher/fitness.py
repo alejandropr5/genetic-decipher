@@ -29,108 +29,6 @@ class NgramType(InputType):
         return [member.value for member in cls]
 
 
-def ngrams_file_to_dictionary(
-    file_path: str | Path,
-    sep=" "
-) -> dict[str, int]:
-    """Reads the content of a n-gram text file, where each line consists
-    of an n-gram string and its associated frequency, and converts it
-    into a Python dictionary where n-gram strings are keys and their
-    frequencies are integer values.
-
-    Args:
-        file_path (str | Path): The path to the n-gram text file.
-        sep (str, optional): The separator used in the text file to
-        separate n-gram strings and their frequencies. Defaults to " ".
-
-    Returns:
-        dict[ngram, frequency]: A Python dictionary where keys are
-        n-gram strings, and values are their corresponding frequencies.
-    """
-    with open(file_path, "r") as file:
-        content = file.read()
-
-    ngram_strings = content.splitlines()
-
-    ngrams_dictionary = {}
-    for ngram in ngram_strings:
-        ngram_pair = ngram.split(sep=sep)
-        ngrams_dictionary[ngram_pair[0]] = int(ngram_pair[1])
-
-    return ngrams_dictionary
-
-
-def frequency_to_log_probability(
-        ngrams_dictionary: dict[str, int]
-) -> dict[str, float]:
-    """Converts frequency values in the n-gram dictionary to logarithmic
-    probabilities.
-
-    Args:
-        ngrams_dictionary (dict[ngram, frequency]): A Python dictionary
-        where keys are n-gram strings, and values are their
-        corresponding frequencies.
-    """
-    total_frequency = sum(ngrams_dictionary.values())
-
-    prob_dictionary = {}
-    for key, value in ngrams_dictionary.items():
-        prob_dictionary[key] = log10(value / total_frequency)
-
-    prob_dictionary["0"] = log10(0.01 / total_frequency)
-    return prob_dictionary
-
-
-def select_parent(population_fitness: dict[str, float]) -> str:
-    """Selects a parent from a population based on their fitness scores
-    using a weighted random selection.
-
-    Args:
-        population_fitness (dict): A dictionary containing fitness
-        scores for individuals in the population.
-
-    Returns:
-        str: The selected parent chosen based on fitness scores.
-    """
-    values = list(population_fitness.values())
-    values_arr = np.array(values)
-    total_fitness = np.sum(values_arr)
-    selection_probability = values_arr / total_fitness
-
-    parent = choices(list(population_fitness),
-                     weights=selection_probability,
-                     k=1)
-
-    return parent[0]
-
-
-def ngrams_folder_to_dictionary_folder(
-    source_folder: str | Path,
-    output_folder: str | Path
-) -> None:
-    """Takes all n-gram score files (.txt) from the source folder,
-    converts them into n-gram dictionaries with logarithmic
-    probabilities and saves them in the output folder.
-
-    Args:
-        source_path (str | Path): The path to the source folder
-        containing n-gram score text files.
-        output_path (str | Path): The path to the output folder where
-        n-gram dictionaries will be saved.
-    """
-    files = iglob(join(source_folder, "*.txt"))
-
-    for file in files:
-        file_name = basename(file).split(".")[0]
-
-        ngrams_dictionary = ngrams_file_to_dictionary(file)
-        prob_dictionary = frequency_to_log_probability(ngrams_dictionary)
-        file = join(output_folder, f"{file_name}.dict")
-
-        with open(file, "wb") as file_out:
-            dump(prob_dictionary, file_out)
-
-
 class Ngram:
     def __init__(
         self,
@@ -219,7 +117,109 @@ class Ngram:
         return population_fitness
 
 
-def main():
+def select_parent(population_fitness: dict[str, float]) -> str:
+    """Selects a parent from a population based on their fitness scores
+    using a weighted random selection.
+
+    Args:
+        population_fitness (dict): A dictionary containing fitness
+        scores for individuals in the population.
+
+    Returns:
+        str: The selected parent chosen based on fitness scores.
+    """
+    values = list(population_fitness.values())
+    values_arr = np.array(values)
+    total_fitness = np.sum(values_arr)
+    selection_probability = values_arr / total_fitness
+
+    parent = choices(list(population_fitness),
+                     weights=selection_probability,
+                     k=1)
+
+    return parent[0]
+
+
+def ngrams_file_to_dictionary(
+    file_path: str | Path,
+    sep=" "
+) -> dict[str, int]:  # pragma: no cover
+    """Reads the content of a n-gram text file, where each line consists
+    of an n-gram string and its associated frequency, and converts it
+    into a Python dictionary where n-gram strings are keys and their
+    frequencies are integer values.
+
+    Args:
+        file_path (str | Path): The path to the n-gram text file.
+        sep (str, optional): The separator used in the text file to
+        separate n-gram strings and their frequencies. Defaults to " ".
+
+    Returns:
+        dict[ngram, frequency]: A Python dictionary where keys are
+        n-gram strings, and values are their corresponding frequencies.
+    """
+    with open(file_path, "r") as file:
+        content = file.read()
+
+    ngram_strings = content.splitlines()
+
+    ngrams_dictionary = {}
+    for ngram in ngram_strings:
+        ngram_pair = ngram.split(sep=sep)
+        ngrams_dictionary[ngram_pair[0]] = int(ngram_pair[1])
+
+    return ngrams_dictionary
+
+
+def frequency_to_log_probability(
+        ngrams_dictionary: dict[str, int]
+) -> dict[str, float]:  # pragma: no cover
+    """Converts frequency values in the n-gram dictionary to logarithmic
+    probabilities.
+
+    Args:
+        ngrams_dictionary (dict[ngram, frequency]): A Python dictionary
+        where keys are n-gram strings, and values are their
+        corresponding frequencies.
+    """
+    total_frequency = sum(ngrams_dictionary.values())
+
+    prob_dictionary = {}
+    for key, value in ngrams_dictionary.items():
+        prob_dictionary[key] = log10(value / total_frequency)
+
+    prob_dictionary["0"] = log10(0.01 / total_frequency)
+    return prob_dictionary
+
+
+def ngrams_folder_to_dictionary_folder(
+    source_folder: str | Path,
+    output_folder: str | Path
+) -> None:  # pragma: no cover
+    """Takes all n-gram score files (.txt) from the source folder,
+    converts them into n-gram dictionaries with logarithmic
+    probabilities and saves them in the output folder.
+
+    Args:
+        source_path (str | Path): The path to the source folder
+        containing n-gram score text files.
+        output_path (str | Path): The path to the output folder where
+        n-gram dictionaries will be saved.
+    """
+    files = iglob(join(source_folder, "*.txt"))
+
+    for file in files:
+        file_name = basename(file).split(".")[0]
+
+        ngrams_dictionary = ngrams_file_to_dictionary(file)
+        prob_dictionary = frequency_to_log_probability(ngrams_dictionary)
+        file = join(output_folder, f"{file_name}.dict")
+
+        with open(file, "wb") as file_out:
+            dump(prob_dictionary, file_out)
+
+
+def main():  # pragma: no cover
     parent_folder = join(dirname(__file__), "../..")
     folder_path = join(parent_folder, "data", "ngrams_files")
     output_folder = join(parent_folder, "data", "ngrams_scores")
@@ -227,5 +227,5 @@ def main():
     ngrams_folder_to_dictionary_folder(folder_path, output_folder)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
