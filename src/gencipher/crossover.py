@@ -122,13 +122,12 @@ class Crossover(ABC):
 
         length = len(parent1)
         child = [""] * length
-        start_pos = idx = randint(0, length)
 
-        while idx != start_pos or not any(child):
-            child[idx] = parent2[idx]
-            idx = parent1.index(parent2[idx])
-
-        child = list(map(lambda x, y: y if x == "" else x, child, parent1))
+        while "" in child:
+            idx = child.index("")
+            while child[idx] == "":
+                child[idx] = parent2[idx]
+                idx = parent1.index(parent2[idx])
 
         return "".join(child)
 
