@@ -23,7 +23,7 @@ class Crossover(ABC):
     @staticmethod
     def OX1(parent1: str, parent2: str) -> str:
         """Performs order-one crossover (OX1) on two parent strings to
-        generate a child string.
+        generate a offspring string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
@@ -34,7 +34,7 @@ class Crossover(ABC):
             parent2 are not equal.
 
         Returns:
-            str: The child string generated through order-one crossover.
+            str: The offspring string generated through order-one crossover.
         """
         if len(parent1) != len(parent2):
             raise ParentsLengthError()
@@ -43,21 +43,21 @@ class Crossover(ABC):
         start = randint(0, length)
         end = randint(start, length)
 
-        child = list(parent1[start:end])
-        child_length = len(child)
+        offspring = list(parent1[start:end])
+        offspring_length = len(offspring)
 
-        parent_count = child_count = end
-        while child_length < length:
+        parent_count = offspring_count = end
+        while offspring_length < length:
             idx = parent_count % length
             parent_count += 1
-            if parent2[idx] in child:
+            if parent2[idx] in offspring:
                 continue
             else:
-                child.insert(child_count % length, parent2[idx])
-                child_count += 1
-            child_length = len(child)
+                offspring.insert(offspring_count % length, parent2[idx])
+                offspring_count += 1
+            offspring_length = len(offspring)
 
-        return "".join(child)
+        return "".join(offspring)
 
     @staticmethod
     def PMX(parent1: str,
@@ -65,7 +65,7 @@ class Crossover(ABC):
             start: int | None = None,
             end: int | None = None) -> str:
         """Performs partially mapped crossover (PMX) on two parent
-        strings to generate a child string.
+        strings to generate a offspring string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
@@ -80,7 +80,7 @@ class Crossover(ABC):
             parent2 are not equal.
 
         Returns:
-            str: The child string generated through partially mapped
+            str: The offspring string generated through partially mapped
             crossover.
         """
         if len(parent1) != len(parent2):
@@ -92,28 +92,30 @@ class Crossover(ABC):
         if end is None:
             end = randint(start, length)
 
-        child = [""] * length
+        offspring = [""] * length
         mapping = {}
         for idx in range(start, end):
-            child[idx] = parent1[idx]
+            offspring[idx] = parent1[idx]
             if parent2[idx] not in parent1[start:end]:
-                mapping[parent2[idx]] = child[idx]
+                mapping[parent2[idx]] = offspring[idx]
 
         for i, j in mapping.items():
             parent2_idx = parent2.index(j)
-            while child[parent2_idx] != "":
-                k = child[parent2_idx]
+            while offspring[parent2_idx] != "":
+                k = offspring[parent2_idx]
                 parent2_idx = parent2.index(k)
-            child[parent2_idx] = i
+            offspring[parent2_idx] = i
 
-        child = list(map(lambda x, y: y if x == "" else x, child, parent2))
+        offspring = list(map(lambda x, y: y if x == "" else x,
+                             offspring,
+                             parent2))
 
-        return "".join(child)
+        return "".join(offspring)
 
     @staticmethod
     def CX(parent1: str, parent2: str) -> str:
         """Performs cycle crossover (CX) on two parent strings to
-        generate a child string.
+        generate a offspring string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
@@ -124,27 +126,27 @@ class Crossover(ABC):
             parent2 are not equal.
 
         Returns:
-            str: The child string generated through cycle crossover.
+            str: The offspring string generated through cycle crossover.
         """
         if len(parent1) != len(parent2):
             raise ParentsLengthError()
 
         length = len(parent1)
-        child = [""] * length
+        offspring = [""] * length
 
-        while "" in child:
-            idx = child.index("")
-            while child[idx] == "":
-                child[idx] = parent2[idx]
+        while "" in offspring:
+            idx = offspring.index("")
+            while offspring[idx] == "":
+                offspring[idx] = parent2[idx]
                 idx = parent1.index(parent2[idx])
 
-        return "".join(child)
+        return "".join(offspring)
 
     @abstractmethod
     def FX(self, parent1: str, parent2: str) -> str:   # pragma: no cover
         """This method should implement the algorithm for a full
         crossover function, combining attributes of both parent strings
-        to create a child.
+        to create a offspring.
         """
         pass
 

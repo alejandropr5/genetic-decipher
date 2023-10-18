@@ -31,7 +31,7 @@ class GeneticDecipher(Crossover, Mutation):
 
     def FX(self, winner: str, loser: str) -> str:
         """Performs a full crossover (FX) operation on two parent
-        strings to generate a child string.
+        strings to generate a offspring string.
 
         Args:
             winner (str): The parent with a higher fitness in solving
@@ -44,7 +44,8 @@ class GeneticDecipher(Crossover, Mutation):
             loser strings are not equal.
 
         Returns:
-            str: The child string generated through the full crossover
+            str: The offspring string generated through the full
+            crossover
             operation.
         """
         if len(winner) != len(loser):
