@@ -160,6 +160,7 @@ class GeneticDecipher(Crossover, Mutation):
                                                       "text": []}
         best_key = ("", -inf)
 
+        deciphered_text = cipher_text
         for _ in range(max_iter):
             self.population = self.evolve_population(self.population)
             best_idx_key = max(self.population.items(), key=lambda x: x[1])
