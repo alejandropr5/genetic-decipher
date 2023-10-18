@@ -213,6 +213,7 @@ def ngrams_folder_to_dictionary_folder(
 
         ngrams_dictionary = ngrams_file_to_dictionary(file)
         prob_dictionary = frequency_to_log_probability(ngrams_dictionary)
+        print(prob_dictionary)
         file = join(output_folder, f"{file_name}.dict")
 
         with open(file, "wb") as file_out:
