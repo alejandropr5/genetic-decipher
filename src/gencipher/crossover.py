@@ -60,13 +60,20 @@ class Crossover(ABC):
         return "".join(child)
 
     @staticmethod
-    def PMX(parent1: str, parent2: str) -> str:
+    def PMX(parent1: str,
+            parent2: str,
+            start: int | None = None,
+            end: int | None = None) -> str:
         """Performs partially mapped crossover (PMX) on two parent
         strings to generate a child string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
             parent2 (str): The second parent string used for crossover.
+            start (int | None, optional): First crossover point, if not
+            provided, will be chosen randomly. Defaults to None.
+            end (int | None, optional): Second crossover point, if not
+            provided, will be chosen randomly. Defaults to None.
 
         Raises:
             ParentsLengthError: Raised if the lengths of parent1 and
@@ -80,24 +87,26 @@ class Crossover(ABC):
             raise ParentsLengthError()
 
         length = len(parent1)
-        start = randint(0, length)
-        end = randint(start, length)
+        if start is None:
+            start = randint(0, length)
+        if end is None:
+            end = randint(start, length)
 
         child = [""] * length
         mapping = {}
         for idx in range(start, end):
             child[idx] = parent1[idx]
             if parent2[idx] not in parent1[start:end]:
-                mapping[child[idx]] = parent2[idx]
+                mapping[parent2[idx]] = child[idx]
 
-        for child_element, parent_element in mapping.items():
-            parent2_idx = parent2.index(child_element)
-            if child[parent2_idx] != "":
-                child[parent2.index(child[parent2_idx])] = parent_element
-            else:
-                child[parent2_idx] = parent_element
+        for i, j in mapping.items():
+            parent2_idx = parent2.index(j)
+            while child[parent2_idx] != "":
+                k = child[parent2_idx]
+                parent2_idx = parent2.index(k)
+            child[parent2_idx] = i
 
-        child = list(map(lambda x, y: y if x is None else x, child, parent2))
+        child = list(map(lambda x, y: y if x == "" else x, child, parent2))
 
         return "".join(child)
 
