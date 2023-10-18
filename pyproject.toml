@@ -35,7 +35,7 @@ gencipher = "py.typed"
 max-line-length = 79
 
 [tool.pytest.ini_options]
-addopts = "--cov=gencipher"
+addopts = "--cov=gencipher --cov-report=html"
 testpaths = [
     "tests",
 ]
