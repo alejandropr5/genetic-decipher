@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "backend"
 version = "0.1.0"
-description = "cryptogram decoder API"
+description = "Cryptogram decoder API"
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
 readme = "README.md"
 homepage = ""
@@ -35,7 +35,7 @@ gencipher = "py.typed"
 max-line-length = 79
 
 [tool.pytest.ini_options]
-addopts = "--cov=gencipher --cov-report=html"
+addopts = "--cov=gencipher"
 testpaths = [
     "tests",
 ]
