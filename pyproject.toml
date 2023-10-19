@@ -3,7 +3,6 @@ name = "backend"
 version = "0.1.0"
 description = "Cryptogram decoder API"
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
-readme = "README.md"
 homepage = ""
 repository = "https://github.com/alejandropr5/cryptogram-decoder/tree/main/backend"
 packages = [{include = "gencipher", from = "src"}]
