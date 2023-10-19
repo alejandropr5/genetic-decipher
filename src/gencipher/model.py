@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Union
 from numpy import inf
 from random import random
 
@@ -12,7 +13,7 @@ class GeneticDecipher(Crossover, Mutation):
     def __init__(
             self,
             ngram_type: str = "quadgram",
-            scores_folder: str | Path = "data/ngrams_scores"
+            scores_folder: Union[str, Path] = "data/ngrams_scores"
     ) -> None:
         """Initialize the GeneticDecipher class.
 
@@ -156,9 +157,9 @@ class GeneticDecipher(Crossover, Mutation):
 
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
-        self.history: dict[str, list[str | float]] = {"key": [],
-                                                      "score": [],
-                                                      "text": []}
+        self.history: dict[str, list[Union[str, float]]] = {"key": [],
+                                                            "score": [],
+                                                            "text": []}
         best_key = ("", -inf)
 
         deciphered_text = cipher_text

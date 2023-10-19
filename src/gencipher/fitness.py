@@ -1,4 +1,5 @@
 from re import sub
+from typing import Union
 import numpy as np
 from glob import iglob
 from math import log10
@@ -33,7 +34,7 @@ class Ngram:
     def __init__(
         self,
         ngram_type: str,
-        scores_folder: str | Path
+        scores_folder: Union[str, Path]
     ) -> None:
         """Initializes an Ngram object for a specified n-gram type.
 
@@ -41,7 +42,7 @@ class Ngram:
             ngram_type (str): The type of n-gram to initialize. It must
             be one of the following valid values: "monogram", "bigram,"
             "trigram", "quadgram", or "quintgram".
-            scores_folder (str | Path): The path to the folder
+            scores_folder (Union[str, Path]): The path to the folder
             containing the precomputed n-gram score pickled
             dictionaries.
         """
@@ -141,7 +142,7 @@ def select_parent(population_fitness: dict[str, float]) -> str:
 
 
 def ngrams_file_to_dictionary(
-    file_path: str | Path,
+    file_path: Union[str, Path],
     sep=" "
 ) -> dict[str, int]:  # pragma: no cover
     """Reads the content of a n-gram text file, where each line consists
@@ -150,7 +151,7 @@ def ngrams_file_to_dictionary(
     frequencies are integer values.
 
     Args:
-        file_path (str | Path): The path to the n-gram text file.
+        file_path (Union[str, Path]): The path to the n-gram text file.
         sep (str, optional): The separator used in the text file to
         separate n-gram strings and their frequencies. Defaults to " ".
 
@@ -193,17 +194,17 @@ def frequency_to_log_probability(
 
 
 def ngrams_folder_to_dictionary_folder(
-    source_folder: str | Path,
-    output_folder: str | Path
+    source_folder: Union[str, Path],
+    output_folder: Union[str, Path]
 ) -> None:  # pragma: no cover
     """Takes all n-gram score files (.txt) from the source folder,
     converts them into n-gram dictionaries with logarithmic
     probabilities and saves them in the output folder.
 
     Args:
-        source_path (str | Path): The path to the source folder
+        source_path (Union[str, Path]): The path to the source folder
         containing n-gram score text files.
-        output_path (str | Path): The path to the output folder where
+        output_path (Union[str, Path]): The path to the output folder where
         n-gram dictionaries will be saved.
     """
     files = iglob(join(source_folder, "*.txt"))

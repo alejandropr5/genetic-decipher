@@ -1,4 +1,5 @@
 from random import randint
+from typing import Optional
 from abc import ABC, abstractmethod
 
 from gencipher.utils import InvalidInputError, InputType
@@ -62,17 +63,17 @@ class Crossover(ABC):
     @staticmethod
     def PMX(parent1: str,
             parent2: str,
-            start: int | None = None,
-            end: int | None = None) -> str:
+            start: Optional[int] = None,
+            end: Optional[int] = None) -> str:
         """Performs partially mapped crossover (PMX) on two parent
         strings to generate a offspring string.
 
         Args:
             parent1 (str): The first parent string used for crossover.
             parent2 (str): The second parent string used for crossover.
-            start (int | None, optional): First crossover point, if not
+            start (int, optional): First crossover point, if not
             provided, will be chosen randomly. Defaults to None.
-            end (int | None, optional): Second crossover point, if not
+            end (int, optional): Second crossover point, if not
             provided, will be chosen randomly. Defaults to None.
 
         Raises:

@@ -3,6 +3,7 @@ from enum import Enum
 from io import StringIO
 from random import shuffle
 from string import ascii_uppercase, ascii_lowercase
+from typing import Union
 
 
 class InputType(Enum):
@@ -47,7 +48,7 @@ def random_cipher_key() -> str:
     return cipher_key_str
 
 
-def encrypt(text: str, cipher_key: str | list[str]) -> str:
+def encrypt(text: str, cipher_key: Union[str, list[str]]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
@@ -74,7 +75,7 @@ def encrypt(text: str, cipher_key: str | list[str]) -> str:
 
 def encrypt_deprecated(
     text: str,
-    cipher_key: str | list[str]
+    cipher_key: Union[str, list[str]]
 ) -> str:   # pragma: no cover
     """Substitutes characters in the input text using a provided
     substitution cipher key.
@@ -102,7 +103,7 @@ def encrypt_deprecated(
 
 def decrypt_deprecated(
     text: str,
-    cipher_key: str | list[str]
+    cipher_key: Union[str, list[str]]
 ) -> str:   # pragma: no cover
     """Substitutes characters in the input text using a provided
     substitution cipher key.
@@ -132,7 +133,7 @@ def decrypt_deprecated(
     return plain_text.getvalue()
 
 
-def decrypt(text: str, cipher_key: str | list[str]) -> str:
+def decrypt(text: str, cipher_key: Union[str, list[str]]) -> str:
     """Substitutes characters in the input text using a provided
     substitution cipher key.
 
