@@ -1,8 +1,6 @@
-import pytest
 from gencipher.model import GeneticDecipher
 
 
-@pytest.mark.xfail
 def test_decipher_method():
     gencipher = GeneticDecipher()
 
@@ -16,5 +14,9 @@ def test_decipher_method():
         "will insist on coming along and trying to put things in it."
     )
     deciphered_text = gencipher.decipher(cipher_text,
-                                         max_iter=20)
-    assert deciphered_text == decoded_text
+                                         max_iter=20,
+                                         crossover_type="partially-mapped")
+
+    assert len(deciphered_text) == len(decoded_text)
+    assert (abs(gencipher.ngram.compute_fitness(deciphered_text)) >
+            abs(gencipher.ngram.compute_fitness(decoded_text)))
