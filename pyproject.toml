@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Cryptogram decoder API"
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
 homepage = ""
-repository = "https://github.com/alejandropr5/cryptogram-decoder/tree/main/backend"
+repository = "https://github.com/alejandropr5/genetic-decipher.git"
 packages = [{include = "gencipher", from = "src"}]
 
 [tool.poetry.dependencies]
