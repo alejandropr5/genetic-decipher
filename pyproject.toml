@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "genetic-decipher"
+name = "gencipher"
 version = "0.1.0"
 description = "Python tool for deciphering cryptograms using genetic algorithms."
 authors = ["alejandropr05 <alejandropr05@hotmail.com>"]
