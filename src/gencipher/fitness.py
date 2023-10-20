@@ -34,7 +34,7 @@ class Ngram:
     def __init__(
         self,
         ngram_type: str,
-        scores_folder: Union[str, Path]
+        scores_folder: Union[str, Path] = ""
     ) -> None:
         """Initializes an Ngram object for a specified n-gram type.
 
@@ -42,11 +42,15 @@ class Ngram:
             ngram_type (str): The type of n-gram to initialize. It must
             be one of the following valid values: "monogram", "bigram,"
             "trigram", "quadgram", or "quintgram".
-            scores_folder (Union[str, Path]): The path to the folder
-            containing the precomputed n-gram score pickled
-            dictionaries.
+            scores_folder (Union[str, Path]): The path to the
+            folder containing the precomputed n-gram score pickled
+            dictionaries. Defaults to "".
         """
         self.ngram_type = ngram_type
+
+        if scores_folder == "":
+            parent_folder = join(dirname(__file__), "../..")
+            scores_folder = join(parent_folder, "data", "ngrams_scores")
 
         file = join(scores_folder, f"english_{self.ngram_type}s.dict")
         with open(file, "rb") as file_in:

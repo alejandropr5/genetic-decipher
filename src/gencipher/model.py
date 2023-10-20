@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Union
 from numpy import inf
 from random import random
@@ -12,8 +11,7 @@ from gencipher.fitness import select_parent, Ngram
 class GeneticDecipher(Crossover, Mutation):
     def __init__(
             self,
-            ngram_type: str = "quadgram",
-            scores_folder: Union[str, Path] = "data/ngrams_scores"
+            ngram_type: str = "quadgram"
     ) -> None:
         """Initialize the GeneticDecipher class.
 
@@ -28,7 +26,7 @@ class GeneticDecipher(Crossover, Mutation):
         analysis. It aims to find the optimal decipher key for a
         given cryptogram.
         """
-        self.ngram = Ngram(ngram_type, scores_folder)
+        self.ngram = Ngram(ngram_type)
 
     def FX(self, winner: str, loser: str) -> str:
         """Performs a full crossover (FX) operation on two parent
