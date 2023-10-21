@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Iterable, Union
 from numpy import inf
 from random import random
 
@@ -174,3 +174,35 @@ class GeneticDecipher(Crossover, Mutation):
             self.history["text"].append(deciphered_text)
 
         return deciphered_text
+
+    def decipher_generator(
+            self,
+            cipher_text: str,
+            max_iter: int = 20,
+            n_population: int = 100,
+            mutation_type: str = "scramble",
+            crossover_type: str = "full",
+            mutation_rate: float = 0.01,
+            crossover_rate: float = 0.6
+    ) -> Iterable[tuple[str, float, str]]:
+        self.cipher_text = cipher_text
+        self.n_population = n_population
+        self._set_mutation(mutation_type)
+        self._set_crossover(crossover_type)
+        self.mutation_rate = mutation_rate
+        self.crossover_rate = crossover_rate
+
+        self.population = self.ngram.generate_population(self.cipher_text,
+                                                         self.n_population)
+        best_key = ("", -inf)
+
+        deciphered_text = cipher_text
+        for _ in range(max_iter):
+            self.population = self.evolve_population(self.population)
+            best_idx_key = max(self.population.items(), key=lambda x: x[1])
+
+            if best_idx_key[1] > best_key[1]:
+                best_key = best_idx_key
+            deciphered_text = decrypt(self.cipher_text, best_key[0])
+
+            yield best_key[0], best_key[1], deciphered_text
