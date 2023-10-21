@@ -1,4 +1,3 @@
-from os.path import join, dirname
 from gencipher.fitness import select_parent, Ngram, NgramType
 
 
@@ -21,12 +20,9 @@ def test_fitness_select_parent():
 
 
 def test_fitness_ngram_class():
-    parent_folder = join(dirname(__file__), "..")
-    scores_folder = join(parent_folder, "data", "ngrams_scores")
-
     # Test the load of ngram score files
     for ngram_type in NgramType.values():
-        ngram = Ngram(ngram_type, scores_folder)
+        ngram = Ngram(ngram_type)
 
     # Test the compute_fitness method
     text = "HELLO"
