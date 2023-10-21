@@ -9,8 +9,12 @@ from random import choices
 from pickle import dump, load
 from os.path import join, dirname, basename
 
-from gencipher.utils import random_cipher_key, decrypt, InvalidInputError
-from gencipher.utils import InputType
+from gencipher.utils import (
+    random_cipher_key,
+    decrypt,
+    InvalidInputError,
+    InputType
+)
 
 
 class NgramType(InputType):
