@@ -1,3 +1,4 @@
+from importlib import resources
 from re import sub
 from typing import Union
 import numpy as np
@@ -34,7 +35,7 @@ class Ngram:
     def __init__(
         self,
         ngram_type: str,
-        scores_folder: Union[str, Path] = "./data/ngrams_scores"
+        scores_folder: Union[str, Path] = ""
     ) -> None:
         """Initializes an Ngram object for a specified n-gram type.
 
@@ -47,6 +48,9 @@ class Ngram:
             dictionaries. Defaults to "".
         """
         self.ngram_type = ngram_type
+
+        if scores_folder == "":
+            scores_folder = f"{resources.files('ngrams_scores')}"
 
         file = join(scores_folder, f"english_{self.ngram_type}s.dict")
         with open(file, "rb") as file_in:
