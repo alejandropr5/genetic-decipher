@@ -7,7 +7,10 @@ maintainers = ["alejandropr05 <alejandropr05@hotmail.com>"]
 homepage = ""
 repository = "https://github.com/alejandropr5/genetic-decipher"
 readme = "README.md"
-packages = [{include = "gencipher", from = "src"}]
+packages = [
+    {include = "gencipher", from = "src"},
+    {include = "ngrams_scores", from = "data"}
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
@@ -27,7 +30,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [options.package_data]
-gencipher = "py.typed"
+gencipher = ["py.typed", "data/ngrams_scores/*.dict"]
 
 [flake8]
 max-line-length = 79
