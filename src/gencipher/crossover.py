@@ -2,7 +2,8 @@ import random
 from typing import Optional
 from abc import ABC, abstractmethod
 
-from gencipher.utils import InvalidInputError, InputType, CipherKey
+from gencipher.utils import InvalidInputError, InputType
+from gencipher.cipherkey import CipherKey
 
 
 class ParentsLengthError(ValueError):

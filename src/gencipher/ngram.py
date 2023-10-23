@@ -2,20 +2,14 @@ import os
 import re
 import glob
 import math
-import random
 import pickle
-import numpy as np
 from typing import Union
 from pathlib import Path
 from importlib import resources
 
 
-from gencipher.utils import (
-    CipherKey,
-    random_cipher_key,
-    InvalidInputError,
-    InputType
-)
+from gencipher.utils import InvalidInputError, InputType
+from gencipher.cipherkey import CipherKey, random_cipher_key
 
 
 class NgramType(InputType):
@@ -117,29 +111,6 @@ class Ngram:
             population_fitness[key] = self.compute_fitness(decipher_text)
 
         return population_fitness
-
-
-def select_parent(population_fitness: dict[CipherKey, float]) -> CipherKey:
-    """Select a parent from a population based on their fitness scores
-    using a weighted random selection.
-
-    Args:
-        population_fitness (dict): A dictionary containing fitness
-        scores for individuals in the population.
-
-    Returns:
-        CipherKey: The selected parent chosen based on fitness scores.
-    """
-    values = list(population_fitness.values())
-    values_arr = np.array(values)
-    total_fitness = np.sum(values_arr)
-    selection_probability = values_arr / total_fitness
-
-    parent = random.choices(list(population_fitness),
-                            weights=selection_probability,
-                            k=1)
-
-    return parent[0]
 
 
 def _ngrams_file_to_dictionary(

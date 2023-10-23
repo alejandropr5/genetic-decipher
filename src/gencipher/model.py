@@ -3,10 +3,11 @@ import random
 import numpy as np
 from typing import Iterator, Union
 
-from gencipher.utils import CipherKey
+from gencipher.cipherkey import CipherKey
 from gencipher.mutation import Mutation
 from gencipher.crossover import Crossover, ParentsLengthError
-from gencipher.fitness import select_parent, Ngram
+from gencipher.ngram import Ngram
+from gencipher.utils import select_parent
 
 
 class GeneticDecipher(Crossover, Mutation):

@@ -1,7 +1,7 @@
 import pytest
 
 from gencipher.crossover import ParentsLengthError
-from gencipher.fitness import select_parent
+from gencipher.utils import select_parent
 
 
 @pytest.mark.parametrize("crossover_type", [

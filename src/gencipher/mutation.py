@@ -1,6 +1,7 @@
 import random
 
-from gencipher.utils import CipherKey, InvalidInputError, InputType
+from gencipher.utils import InvalidInputError, InputType
+from gencipher.cipherkey import CipherKey
 
 
 class MutationType(InputType):
