@@ -1,13 +1,14 @@
-from importlib import resources
-from re import sub
-from typing import Union
+import os
+import re
+import glob
+import math
+import random
+import pickle
 import numpy as np
-from glob import iglob
-from math import log10
+from typing import Union
 from pathlib import Path
-from random import choices
-from pickle import dump, load
-from os.path import join, dirname, basename
+from importlib import resources
+
 
 from gencipher.utils import (
     CipherKey,
@@ -18,21 +19,14 @@ from gencipher.utils import (
 
 
 class NgramType(InputType):
+    """Collection of available types of n-grams for genetic
+    algorithms.
+    """
     MONOGRAM = "monogram"
     BIGRAM = "bigram"
     TRIGRAM = "trigram"
     QUADGRAM = "quadgram"
     QUINTGRAM = "quintgram"
-
-    @classmethod
-    def values(cls):
-        """Retrieve the values of the NgramType enum class.
-
-        Returns:
-            Iterable[str]: An iterable containing the values of the
-            NgramType enum as strings.
-        """
-        return [member.value for member in cls]
 
 
 class Ngram:
@@ -43,7 +37,7 @@ class Ngram:
         ngram_type: str,
         scores_folder: Union[str, Path] = _NGRAMS_SCORES
     ) -> None:
-        """Initializes an Ngram object for a specified n-gram type.
+        """Create a Ngram object for a specified n-gram type.
 
         Args:
             ngram_type (str): The type of n-gram to initialize. It must
@@ -55,14 +49,14 @@ class Ngram:
         """
         self.ngram_type = ngram_type
 
-        file = join(scores_folder, f"english_{self.ngram_type}s.dict")
+        file = os.path.join(scores_folder, f"english_{self.ngram_type}s.dict")
         with open(file, "rb") as file_in:
-            self.scores = load(file_in)
+            self.scores = pickle.load(file_in)
 
         self.ngram_len = NgramType.values().index(self.ngram_type) + 1
 
     def compute_fitness(self, text: str) -> float:
-        """Computes the fitness score of a given text based on n-gram
+        """Compute the fitness score of a given text based on n-gram
         frequencies.
 
         Args:
@@ -75,7 +69,7 @@ class Ngram:
             on n-gram frequencies.
         """
         uppercase_text = text.upper()
-        uppercase_only_text = sub(r'[^A-Z]', '', uppercase_text)
+        uppercase_only_text = re.sub(r'[^A-Z]', '', uppercase_text)
         fitness = 0.0
 
         for i in range(len(uppercase_only_text) - self.ngram_len + 1):
@@ -103,7 +97,7 @@ class Ngram:
         self, cipher_text: str,
         n_population: int
     ) -> dict[CipherKey, float]:
-        """Generates a population of random cipher keys and computes
+        """Generate a population of random cipher keys and computes
         their fitness scores.
 
         Args:
@@ -126,7 +120,7 @@ class Ngram:
 
 
 def select_parent(population_fitness: dict[CipherKey, float]) -> CipherKey:
-    """Selects a parent from a population based on their fitness scores
+    """Select a parent from a population based on their fitness scores
     using a weighted random selection.
 
     Args:
@@ -141,9 +135,9 @@ def select_parent(population_fitness: dict[CipherKey, float]) -> CipherKey:
     total_fitness = np.sum(values_arr)
     selection_probability = values_arr / total_fitness
 
-    parent = choices(list(population_fitness),
-                     weights=selection_probability,
-                     k=1)
+    parent = random.choices(list(population_fitness),
+                            weights=selection_probability,
+                            k=1)
 
     return parent[0]
 
@@ -182,7 +176,7 @@ def _ngrams_file_to_dictionary(
 def _frequency_to_log_probability(
     ngrams_dictionary: dict[str, int]
 ) -> dict[str, float]:  # pragma: no cover
-    """Converts frequency values in the n-gram dictionary to logarithmic
+    """Convert frequency values in the n-gram dictionary to logarithmic
     probabilities.
 
     Args:
@@ -194,9 +188,9 @@ def _frequency_to_log_probability(
 
     prob_dictionary = {}
     for key, value in ngrams_dictionary.items():
-        prob_dictionary[key] = log10(value / total_frequency)
+        prob_dictionary[key] = math.log10(value / total_frequency)
 
-    prob_dictionary["0"] = log10(0.01 / total_frequency)
+    prob_dictionary["0"] = math.log10(0.01 / total_frequency)
     return prob_dictionary
 
 
@@ -214,24 +208,24 @@ def _ngrams_folder_to_dictionary_folder(
         output_path (Union[str, Path]): The path to the output folder where
         n-gram dictionaries will be saved.
     """
-    files = iglob(join(source_folder, "*.txt"))
+    files = glob.iglob(os.path.join(source_folder, "*.txt"))
 
     for file in files:
-        file_name = basename(file).split(".")[0]
+        file_name = os.path.basename(file).split(".")[0]
 
         ngrams_dictionary = _ngrams_file_to_dictionary(file)
         prob_dictionary = _frequency_to_log_probability(ngrams_dictionary)
         print(prob_dictionary)
-        file = join(output_folder, f"{file_name}.dict")
+        file = os.path.join(output_folder, f"{file_name}.dict")
 
         with open(file, "wb") as file_out:
-            dump(prob_dictionary, file_out)
+            pickle.dump(prob_dictionary, file_out)
 
 
 def main():  # pragma: no cover
-    parent_folder = join(dirname(__file__), "../..")
-    folder_path = join(parent_folder, "data", "ngrams_files")
-    output_folder = join(parent_folder, "data", "ngrams_scores")
+    parent_folder = os.path.join(os.path.dirname(__file__), "../..")
+    folder_path = os.path.join(parent_folder, "data", "ngrams_files")
+    output_folder = os.path.join(parent_folder, "data", "ngrams_scores")
 
     _ngrams_folder_to_dictionary_folder(folder_path, output_folder)
 

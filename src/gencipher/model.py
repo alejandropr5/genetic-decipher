@@ -1,7 +1,7 @@
-from string import ascii_uppercase
-from typing import Iterable, Union
-from numpy import inf
-from random import random
+import string
+import random
+import numpy as np
+from typing import Iterator, Union
 
 from gencipher.utils import CipherKey
 from gencipher.mutation import Mutation
@@ -14,23 +14,16 @@ class GeneticDecipher(Crossover, Mutation):
         self,
         ngram_type: str = "quadgram"
     ) -> None:
-        """Initialize the GeneticDecipher class.
+        """Create a GeneticDecipher object.
 
         Args:
             ngram_type (str, optional): The type of n-gram analysis to
             be used. Defaults to "quadgram."
-
-        Summary:
-        The GeneticDecipher class applies a genetic algorithm for
-        cryptogram deciphering, using various strategies such as
-        crossover, mutation, and fitness evaluation based on n-gram
-        analysis. It aims to find the optimal decipher key for a
-        given cryptogram.
         """
         self.ngram = Ngram(ngram_type)
 
     def FX(self, winner: CipherKey, loser: CipherKey) -> CipherKey:
-        """Performs a full crossover (FX) operation on two parent
+        """Perform a full crossover (FX) operation on two parent
         strings to generate a offspring string.
 
         Args:
@@ -61,14 +54,13 @@ class GeneticDecipher(Crossover, Mutation):
                 new_key = target_key[:]
                 temp_idx = new_key.index(source_key[idx])
                 new_key[idx], new_key[temp_idx] = source_key[idx], new_key[idx]
-                new_key = CipherKey("".join(new_key))
+                new_cipher_key = CipherKey("".join(new_key))
 
-                new_text = new_key.decode_cipher(self.cipher_text)
+                new_text = new_cipher_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
                 if new_fitness > target_fitness:
                     target_key = new_key
                     target_fitness = new_fitness
-                target_key = list(target_key)
 
         return CipherKey("".join(target_key))
 
@@ -76,7 +68,7 @@ class GeneticDecipher(Crossover, Mutation):
         self,
         population: dict[CipherKey, float]
     ) -> dict[CipherKey, float]:
-        """Evolves the population of candidate solutions through
+        """Evolve the population of candidate solutions through
         crossover and mutation.
 
         Args:
@@ -101,14 +93,14 @@ class GeneticDecipher(Crossover, Mutation):
             new_key = winner
             new_fitness = fitness_target = population[winner]
 
-            if random() < self.crossover_rate:
+            if random.random() < self.crossover_rate:
                 new_key = self.crossover(winner, loser)
                 new_text = new_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
                 if new_fitness < fitness_target:
                     new_key = winner
                     new_fitness = fitness_target
-            if random() < self.mutation_rate:
+            if random.random() < self.mutation_rate:
                 new_key = self.mutation(new_key)
                 new_text = new_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
@@ -126,7 +118,7 @@ class GeneticDecipher(Crossover, Mutation):
         mutation_rate: float = 0.01,
         crossover_rate: float = 0.6
     ) -> str:
-        """Deciphers a cryptogram using a genetic algorithm.
+        """Decipher a cryptogram using a genetic algorithm.
 
         Args:
             cipher_text (str): The cryptogram to be deciphered.
@@ -161,7 +153,7 @@ class GeneticDecipher(Crossover, Mutation):
         self.history: dict[str, list[Union[str, float]]] = {"key": [],
                                                             "score": [],
                                                             "text": []}
-        best_key = (CipherKey(ascii_uppercase), -inf)
+        best_key = (CipherKey(string.ascii_uppercase), -np.inf)
 
         deciphered_text = cipher_text
         for _ in range(max_iter):
@@ -187,7 +179,7 @@ class GeneticDecipher(Crossover, Mutation):
         crossover_type: str = "full",
         mutation_rate: float = 0.01,
         crossover_rate: float = 0.6
-    ) -> Iterable[tuple[str, float, str]]:
+    ) -> Iterator[tuple[str, float, str]]:
         self.cipher_text = cipher_text
         self.n_population = n_population
         self._set_mutation(mutation_type)
@@ -197,7 +189,7 @@ class GeneticDecipher(Crossover, Mutation):
 
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
-        best_key = (CipherKey(ascii_uppercase), -inf)
+        best_key = (CipherKey(string.ascii_uppercase), -np.inf)
 
         deciphered_text = cipher_text
         for _ in range(max_iter):

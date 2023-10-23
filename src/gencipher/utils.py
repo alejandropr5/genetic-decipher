@@ -1,10 +1,13 @@
-from enum import Enum
-from random import shuffle
-from typing import Self
-from string import ascii_uppercase, ascii_lowercase
+import enum
+import random
+import string
+from typing import TypeVar, Type
 
 
-class InputType(Enum):
+class InputType(enum.Enum):
+    """Create a custom collection of name/values pairs.
+    It provides a method to retrieve the available values as strings.
+    """
     @classmethod
     def values(cls):
         """Retrieve the values of the InputType enum class.
@@ -16,27 +19,28 @@ class InputType(Enum):
         return [member.value for member in cls]
 
 
-class InvalidInputError(Exception):
+class InvalidInputError(ValueError):
+    """Input doesn't match any valid values from the InputType"""
     def __init__(
         self,
         var_name: str,
         var: InputType,
         var_class: type[InputType]
     ) -> None:
-        """Raised when a variable is expected to have a valid value from
-        the InputType classes, but the provided value does not match any of
-        the expected valid values.
-        """
         super().__init__(
             f'Invalid {var_name}: "{var}".It should be one of '
             + ", ".join(f'"{value}"' for value in var_class.values()) + "."
         )
 
 
-class InvalidCipherKey(Exception):
+class InvalidCipherKey(ValueError):
+    """Inappropriate cipher key value"""
     def __init__(self):
         super().__init__("Invalid cipher key. The key must contain all"
                          "letters of the english alphabet.")
+
+
+TCipherKey = TypeVar("TCipherKey", bound="CipherKey")
 
 
 class CipherKey(str):
@@ -47,13 +51,13 @@ class CipherKey(str):
     cipher keys used in decryption. It provides methods for encoding and
     decoding plain texts using the cipher key.
     """
-    def __new__(cls, value: str) -> Self:
+    def __new__(cls: Type[TCipherKey], value: str) -> TCipherKey:
         cls._check_value(value)
         return super().__new__(cls, value)
 
     def __init__(self, value: str) -> None:
         camel_key = value.lower() + value.upper()
-        camel_alphabet = ascii_lowercase + ascii_uppercase
+        camel_alphabet = string.ascii_lowercase + string.ascii_uppercase
         self._encode_table = str.maketrans(camel_alphabet, camel_key)
         self._decode_table = str.maketrans(camel_key, camel_alphabet)
         super().__init__()
@@ -62,11 +66,11 @@ class CipherKey(str):
     def _check_value(value: str):
         if type(value) is not str:
             raise ValueError('Not a str type')
-        if sorted(value.upper()) != sorted(ascii_uppercase):
+        if sorted(value.upper()) != sorted(string.ascii_uppercase):
             raise InvalidCipherKey()
 
     def encode_cipher(self, plain_text: str) -> str:
-        """Encodes plain text using the cipher key.
+        """Encode plain text using the cipher key.
 
         Args:
             plain_text (str): The plain text to be encoded.
@@ -77,7 +81,7 @@ class CipherKey(str):
         return plain_text.translate(self._encode_table)
 
     def decode_cipher(self, cipher_text: str) -> str:
-        """Decodes cipher text using the cipher key.
+        """Decode cipher text using the cipher key.
 
         Args:
             cipher_text (str): The cipher text to be decoded.
@@ -89,12 +93,12 @@ class CipherKey(str):
 
 
 def random_cipher_key() -> CipherKey:
-    """Generates a random substitution cipher key.
+    """Generate a random substitution cipher key.
 
     Returns:
         CipherKey: A randomly shuffled CipherKey.
     """
-    cipher_key_list = list(ascii_uppercase)
-    shuffle(cipher_key_list)
+    cipher_key_list = list(string.ascii_uppercase)
+    random.shuffle(cipher_key_list)
     cipher_key_str = CipherKey("".join(cipher_key_list))
     return cipher_key_str

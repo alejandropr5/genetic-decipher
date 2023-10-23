@@ -1,4 +1,4 @@
-from random import randint
+import random
 from typing import Optional
 from abc import ABC, abstractmethod
 
@@ -6,14 +6,13 @@ from gencipher.utils import InvalidInputError, InputType, CipherKey
 
 
 class ParentsLengthError(ValueError):
+    """Lengths of parents for a crossover operation are not equal."""
     def __init__(self) -> None:
-        """Raised when the lengths of the parents for a crossover
-        operation are not equal.
-        """
         super().__init__("Parents must have equal lengths.")
 
 
 class CrossoverType(InputType):
+    """Collection of available methods for genetic crossover."""
     OX1 = "order-one"
     PMX = "partially-mapped"
     CX = "cycle"
@@ -26,7 +25,7 @@ class Crossover(ABC):
     """
     @staticmethod
     def OX1(parent1: CipherKey, parent2: CipherKey) -> CipherKey:
-        """Performs order-one crossover (OX1) on two parent strings to
+        """Perform order-one crossover (OX1) on two parent strings to
         generate an offspring string.
 
         Args:
@@ -47,8 +46,8 @@ class Crossover(ABC):
             raise ParentsLengthError()
 
         length = len(parent1)
-        start = randint(0, length)
-        end = randint(start, length)
+        start = random.randint(0, length)
+        end = random.randint(start, length)
 
         offspring = list(parent1[start:end])
         offspring_length = len(offspring)
@@ -73,7 +72,7 @@ class Crossover(ABC):
         start: Optional[int] = None,
         end: Optional[int] = None
     ) -> CipherKey:
-        """Performs partially mapped crossover (PMX) on two parent
+        """Perform partially mapped crossover (PMX) on two parent
         CipherKeys to generate an offspring CipherKey.
 
         Args:
@@ -99,9 +98,9 @@ class Crossover(ABC):
 
         length = len(parent1)
         if start is None:
-            start = randint(0, length)
+            start = random.randint(0, length)
         if end is None:
-            end = randint(start, length)
+            end = random.randint(start, length)
 
         offspring = [""] * length
         mapping = {}
@@ -125,7 +124,7 @@ class Crossover(ABC):
 
     @staticmethod
     def CX(parent1: CipherKey, parent2: CipherKey) -> CipherKey:
-        """Performs cycle crossover (CX) on two parent CipherKeys to
+        """Perform cycle crossover (CX) on two parent CipherKeys to
         generate an offspring CipherKey.
 
         Args:

@@ -1,29 +1,21 @@
-from random import sample, randint, shuffle
+import random
 
 from gencipher.utils import CipherKey, InvalidInputError, InputType
 
 
 class MutationType(InputType):
+    """Collection of available methods for genetic mutation."""
     INSERT = "insert"
     SWAP = "swap"
     INVERSION = "inversion"
     SCRAMBLE = "scramble"
 
-    @classmethod
-    def values(cls):
-        """Retrieve the values of the MutationType enum class.
-
-        Returns:
-            Iterable[str]: An iterable containing the values of the
-            MutationType enum as strings.
-        """
-        return (member.value for member in cls)
-
 
 class Mutation:
+    """Base class for mutation methods used in genetic algorithms."""
     @staticmethod
     def insert(parent: CipherKey) -> CipherKey:
-        """Performs insert mutation on a parent CipherKey to generate a
+        """Perform insert mutation on a parent CipherKey to generate a
         mutated CipherKey.
 
         Args:
@@ -33,7 +25,7 @@ class Mutation:
             CipherKey: The mutated CipherKey.
         """
         parent_list = list(parent)
-        pos1, pos2 = sample(range(len(parent_list)), 2)
+        pos1, pos2 = random.sample(range(len(parent_list)), 2)
 
         element = parent_list.pop(pos2)
         parent_list.insert(pos1 + 1, element)
@@ -42,7 +34,7 @@ class Mutation:
 
     @staticmethod
     def swap(parent: CipherKey) -> CipherKey:
-        """Performs swap mutation on a parent CipherKey to generate a
+        """Perform swap mutation on a parent CipherKey to generate a
         mutated CipherKey.
 
         Args:
@@ -52,7 +44,7 @@ class Mutation:
             CipherKey: The mutated CipherKey.
         """
         parent_list = list(parent)
-        pos1, pos2 = sample(range(len(parent_list)), 2)
+        pos1, pos2 = random.sample(range(len(parent_list)), 2)
 
         parent_list[pos1], parent_list[pos2] = (
             parent_list[pos2], parent_list[pos1]
@@ -62,7 +54,7 @@ class Mutation:
 
     @staticmethod
     def inversion(parent: CipherKey) -> CipherKey:
-        """Performs inversion mutation on a parent CipherKey to generate
+        """Perform inversion mutation on a parent CipherKey to generate
         a mutated CipherKey.
 
         Args:
@@ -72,8 +64,8 @@ class Mutation:
             CipherKey: The mutated CipherKey.
         """
         length = len(parent)
-        start = randint(0, length)
-        end = randint(start, length)
+        start = random.randint(0, length)
+        end = random.randint(start, length)
 
         parent_list = list(parent)
         parent_list[start:end] = reversed(parent_list[start:end])
@@ -82,7 +74,7 @@ class Mutation:
 
     @staticmethod
     def scramble(parent: CipherKey) -> CipherKey:
-        """Performs scramble mutation on a parent CipherKey to generate
+        """Perform scramble mutation on a parent CipherKey to generate
         a mutated CipherKey.
 
         Args:
@@ -92,11 +84,11 @@ class Mutation:
             CipherKey: The mutated CipherKey.
         """
         length = len(parent)
-        start = randint(0, length)
-        end = randint(start, length)
+        start = random.randint(0, length)
+        end = random.randint(start, length)
         parent_list = list(parent)
         subList = parent_list[start:end]
-        shuffle(subList)
+        random.shuffle(subList)
         parent_list[start:end] = subList
 
         return CipherKey("".join(parent_list))
