@@ -16,7 +16,6 @@ packages = [
 python = ">=3.9,<3.13"
 numpy = "^1.25.2"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 mypy = "^1.6.0"
@@ -24,6 +23,8 @@ flake8 = "^6.1.0"
 pytest-cov = "^4.1.0"
 tox = "^4.11.3"
 
+[tool.poetry.group.cprofile.dependencies]
+snakeviz = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -36,7 +37,7 @@ gencipher = ["py.typed", "data/ngrams_scores/*.dict"]
 max-line-length = 79
 
 [tool.pytest.ini_options]
-addopts = "--cov=gencipher"
+addopts = "--cov=gencipher --cov-report=html"
 testpaths = [
     "tests",
 ]
