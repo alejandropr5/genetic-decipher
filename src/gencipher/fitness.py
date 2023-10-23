@@ -10,8 +10,8 @@ from pickle import dump, load
 from os.path import join, dirname, basename
 
 from gencipher.utils import (
+    CipherKey,
     random_cipher_key,
-    decrypt,
     InvalidInputError,
     InputType
 )
@@ -100,14 +100,14 @@ class Ngram:
             raise InvalidInputError("ngram_type", ngram_type, NgramType)
 
     def generate_population(
-            self, cipher_text: str,
-            n_population: int
-    ) -> dict[str, float]:
+        self, cipher_text: str,
+        n_population: int
+    ) -> dict[CipherKey, float]:
         """Generates a population of random cipher keys and computes
         their fitness scores.
 
         Args:
-            cipher_text (str): The cipher text to be decrypted by the
+            cipher_text (str): The cipher text to be decoded by the
             generated cipher keys.
             n_population (int): The number of cipher keys to generate in
             the population.
@@ -119,13 +119,13 @@ class Ngram:
 
         population_fitness = {}
         for key in population:
-            decipher_text = decrypt(cipher_text, key)
+            decipher_text = key.decode_cipher(cipher_text)
             population_fitness[key] = self.compute_fitness(decipher_text)
 
         return population_fitness
 
 
-def select_parent(population_fitness: dict[str, float]) -> str:
+def select_parent(population_fitness: dict[CipherKey, float]) -> CipherKey:
     """Selects a parent from a population based on their fitness scores
     using a weighted random selection.
 
@@ -134,7 +134,7 @@ def select_parent(population_fitness: dict[str, float]) -> str:
         scores for individuals in the population.
 
     Returns:
-        str: The selected parent chosen based on fitness scores.
+        CipherKey: The selected parent chosen based on fitness scores.
     """
     values = list(population_fitness.values())
     values_arr = np.array(values)
@@ -148,7 +148,7 @@ def select_parent(population_fitness: dict[str, float]) -> str:
     return parent[0]
 
 
-def ngrams_file_to_dictionary(
+def _ngrams_file_to_dictionary(
     file_path: Union[str, Path],
     sep=" "
 ) -> dict[str, int]:  # pragma: no cover
@@ -179,8 +179,8 @@ def ngrams_file_to_dictionary(
     return ngrams_dictionary
 
 
-def frequency_to_log_probability(
-        ngrams_dictionary: dict[str, int]
+def _frequency_to_log_probability(
+    ngrams_dictionary: dict[str, int]
 ) -> dict[str, float]:  # pragma: no cover
     """Converts frequency values in the n-gram dictionary to logarithmic
     probabilities.
@@ -200,7 +200,7 @@ def frequency_to_log_probability(
     return prob_dictionary
 
 
-def ngrams_folder_to_dictionary_folder(
+def _ngrams_folder_to_dictionary_folder(
     source_folder: Union[str, Path],
     output_folder: Union[str, Path]
 ) -> None:  # pragma: no cover
@@ -219,8 +219,8 @@ def ngrams_folder_to_dictionary_folder(
     for file in files:
         file_name = basename(file).split(".")[0]
 
-        ngrams_dictionary = ngrams_file_to_dictionary(file)
-        prob_dictionary = frequency_to_log_probability(ngrams_dictionary)
+        ngrams_dictionary = _ngrams_file_to_dictionary(file)
+        prob_dictionary = _frequency_to_log_probability(ngrams_dictionary)
         print(prob_dictionary)
         file = join(output_folder, f"{file_name}.dict")
 
@@ -233,7 +233,7 @@ def main():  # pragma: no cover
     folder_path = join(parent_folder, "data", "ngrams_files")
     output_folder = join(parent_folder, "data", "ngrams_scores")
 
-    ngrams_folder_to_dictionary_folder(folder_path, output_folder)
+    _ngrams_folder_to_dictionary_folder(folder_path, output_folder)
 
 
 if __name__ == "__main__":  # pragma: no cover

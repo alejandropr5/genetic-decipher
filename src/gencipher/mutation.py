@@ -1,6 +1,6 @@
 from random import sample, randint, shuffle
 
-from gencipher.utils import InvalidInputError, InputType
+from gencipher.utils import CipherKey, InvalidInputError, InputType
 
 
 class MutationType(InputType):
@@ -22,15 +22,15 @@ class MutationType(InputType):
 
 class Mutation:
     @staticmethod
-    def insert(parent: str) -> str:
-        """Performs insert mutation on a parent string to generate a
-        mutated string.
+    def insert(parent: CipherKey) -> CipherKey:
+        """Performs insert mutation on a parent CipherKey to generate a
+        mutated CipherKey.
 
         Args:
-            parent (str): The parent string to undergo mutation.
+            parent (CipherKey): The parent to undergo mutation.
 
         Returns:
-            str: The mutated string.
+            CipherKey: The mutated CipherKey.
         """
         parent_list = list(parent)
         pos1, pos2 = sample(range(len(parent_list)), 2)
@@ -38,18 +38,18 @@ class Mutation:
         element = parent_list.pop(pos2)
         parent_list.insert(pos1 + 1, element)
 
-        return "".join(parent_list)
+        return CipherKey("".join(parent_list))
 
     @staticmethod
-    def swap(parent: str) -> str:
-        """Performs swap mutation on a parent string to generate a
-        mutated string.
+    def swap(parent: CipherKey) -> CipherKey:
+        """Performs swap mutation on a parent CipherKey to generate a
+        mutated CipherKey.
 
         Args:
-            parent (str): The parent string to undergo mutation.
+            parent (CipherKey): The parent to undergo mutation.
 
         Returns:
-            str: The mutated string.
+            CipherKey: The mutated CipherKey.
         """
         parent_list = list(parent)
         pos1, pos2 = sample(range(len(parent_list)), 2)
@@ -58,18 +58,18 @@ class Mutation:
             parent_list[pos2], parent_list[pos1]
         )
 
-        return "".join(parent_list)
+        return CipherKey("".join(parent_list))
 
     @staticmethod
-    def inversion(parent: str) -> str:
-        """Performs inversion mutation on a parent string to generate a
-        mutated string.
+    def inversion(parent: CipherKey) -> CipherKey:
+        """Performs inversion mutation on a parent CipherKey to generate
+        a mutated CipherKey.
 
         Args:
-            parent (str): The parent string to undergo mutation.
+            parent (CipherKey): The parent to undergo mutation.
 
         Returns:
-            str: The mutated string.
+            CipherKey: The mutated CipherKey.
         """
         length = len(parent)
         start = randint(0, length)
@@ -78,18 +78,18 @@ class Mutation:
         parent_list = list(parent)
         parent_list[start:end] = reversed(parent_list[start:end])
 
-        return "".join(parent_list)
+        return CipherKey("".join(parent_list))
 
     @staticmethod
-    def scramble(parent: str) -> str:
-        """Performs scramble mutation on a parent string to generate a
-        mutated string.
+    def scramble(parent: CipherKey) -> CipherKey:
+        """Performs scramble mutation on a parent CipherKey to generate
+        a mutated CipherKey.
 
         Args:
-            parent (str): The parent string to undergo mutation.
+            parent (CipherKey): The parent to undergo mutation.
 
         Returns:
-            str: The mutated string.
+            CipherKey: The mutated CipherKey.
         """
         length = len(parent)
         start = randint(0, length)
@@ -99,19 +99,9 @@ class Mutation:
         shuffle(subList)
         parent_list[start:end] = subList
 
-        return "".join(parent_list)
+        return CipherKey("".join(parent_list))
 
     def _set_mutation(self, mutation_type) -> None:
-        """Set the mutation function based on the provided mutation
-        type.
-
-        Args:
-            mutation_type (str): The mutation type as a string.
-
-        Raises:
-            InvalidInputError: Raised if the provided mutation_type is
-            not one of the valid mutation types defined in MutationType.
-        """
         if mutation_type == MutationType.INSERT.value:
             self.mutation = self.insert
         elif mutation_type == MutationType.INVERSION.value:

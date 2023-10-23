@@ -1,8 +1,9 @@
+from string import ascii_uppercase
 from typing import Iterable, Union
 from numpy import inf
 from random import random
 
-from gencipher.utils import decrypt
+from gencipher.utils import CipherKey
 from gencipher.mutation import Mutation
 from gencipher.crossover import Crossover, ParentsLengthError
 from gencipher.fitness import select_parent, Ngram
@@ -10,8 +11,8 @@ from gencipher.fitness import select_parent, Ngram
 
 class GeneticDecipher(Crossover, Mutation):
     def __init__(
-            self,
-            ngram_type: str = "quadgram"
+        self,
+        ngram_type: str = "quadgram"
     ) -> None:
         """Initialize the GeneticDecipher class.
 
@@ -28,24 +29,25 @@ class GeneticDecipher(Crossover, Mutation):
         """
         self.ngram = Ngram(ngram_type)
 
-    def FX(self, winner: str, loser: str) -> str:
+    def FX(self, winner: CipherKey, loser: CipherKey) -> CipherKey:
         """Performs a full crossover (FX) operation on two parent
         strings to generate a offspring string.
 
         Args:
-            winner (str): The parent with a higher fitness in solving
-            the cryptogram, used as the first parent for crossover.
-            loser (str): The parent with a lower fitness in solving the
-            cryptogram, used as the second parent for crossover.
+            winner (CipherKey): The parent with a higher fitness in
+            solving the cryptogram, used as the first parent for
+            crossover.
+            loser (CipherKey): The parent with a lower fitness in
+            solving the cryptogram, used as the second parent for
+            crossover.
 
         Raises:
             ParentsLengthError: Raised if the lengths of winner and
-            loser strings are not equal.
+            loser CipherKeys are not equal.
 
         Returns:
-            str: The offspring string generated through the full
-            crossover
-            operation.
+            CipherKey: The offspring CipherKey generated through the
+            full crossover operation.
         """
         if len(winner) != len(loser):
             raise ParentsLengthError()
@@ -59,33 +61,34 @@ class GeneticDecipher(Crossover, Mutation):
                 new_key = target_key[:]
                 temp_idx = new_key.index(source_key[idx])
                 new_key[idx], new_key[temp_idx] = source_key[idx], new_key[idx]
+                new_key = CipherKey("".join(new_key))
 
-                new_text = decrypt(self.cipher_text, new_key)
+                new_text = new_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
                 if new_fitness > target_fitness:
                     target_key = new_key
                     target_fitness = new_fitness
+                target_key = list(target_key)
 
-        return "".join(target_key)
+        return CipherKey("".join(target_key))
 
     def evolve_population(
-            self,
-            population: dict[str, float]
-    ) -> dict[str, float]:
+        self,
+        population: dict[CipherKey, float]
+    ) -> dict[CipherKey, float]:
         """Evolves the population of candidate solutions through
         crossover and mutation.
 
         Args:
             population (dict): A dictionary representing the current
-            population of candidate solutions, where keys are cipher
-            keys (strings) and values are their corresponding fitness
-            scores (float).
+            population of candidate solutions, where keys are CipherKeys
+            and values are their corresponding fitness scores (float).
 
         Returns:
             dict: A new population of candidate solutions after applying
             crossover and mutation, represented as a dictionary. Keys
-            are cipher keys (strings), and values are their updated
-            fitness scores (float).
+            are CipherKeys, and values are their updated fitness scores
+            (float).
         """
         new_population = {}
         for _ in range(self.n_population):
@@ -100,28 +103,28 @@ class GeneticDecipher(Crossover, Mutation):
 
             if random() < self.crossover_rate:
                 new_key = self.crossover(winner, loser)
-                new_text = decrypt(self.cipher_text, new_key)
+                new_text = new_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
                 if new_fitness < fitness_target:
                     new_key = winner
                     new_fitness = fitness_target
             if random() < self.mutation_rate:
                 new_key = self.mutation(new_key)
-                new_text = decrypt(self.cipher_text, new_key)
+                new_text = new_key.decode_cipher(self.cipher_text)
                 new_fitness = self.ngram.compute_fitness(new_text)
             new_population[new_key] = new_fitness
 
         return new_population
 
     def decipher(
-            self,
-            cipher_text: str,
-            max_iter: int = 20,
-            n_population: int = 100,
-            mutation_type: str = "scramble",
-            crossover_type: str = "full",
-            mutation_rate: float = 0.01,
-            crossover_rate: float = 0.6
+        self,
+        cipher_text: str,
+        max_iter: int = 20,
+        n_population: int = 100,
+        mutation_type: str = "scramble",
+        crossover_type: str = "full",
+        mutation_rate: float = 0.01,
+        crossover_rate: float = 0.6
     ) -> str:
         """Deciphers a cryptogram using a genetic algorithm.
 
@@ -158,7 +161,7 @@ class GeneticDecipher(Crossover, Mutation):
         self.history: dict[str, list[Union[str, float]]] = {"key": [],
                                                             "score": [],
                                                             "text": []}
-        best_key = ("", -inf)
+        best_key = (CipherKey(ascii_uppercase), -inf)
 
         deciphered_text = cipher_text
         for _ in range(max_iter):
@@ -167,7 +170,7 @@ class GeneticDecipher(Crossover, Mutation):
 
             if best_idx_key[1] > best_key[1]:
                 best_key = best_idx_key
-            deciphered_text = decrypt(self.cipher_text, best_key[0])
+            deciphered_text = best_key[0].decode_cipher(self.cipher_text)
 
             self.history["key"].append(best_key[0])
             self.history["score"].append(best_key[1])
@@ -176,14 +179,14 @@ class GeneticDecipher(Crossover, Mutation):
         return deciphered_text
 
     def decipher_generator(
-            self,
-            cipher_text: str,
-            max_iter: int = 20,
-            n_population: int = 100,
-            mutation_type: str = "scramble",
-            crossover_type: str = "full",
-            mutation_rate: float = 0.01,
-            crossover_rate: float = 0.6
+        self,
+        cipher_text: str,
+        max_iter: int = 20,
+        n_population: int = 100,
+        mutation_type: str = "scramble",
+        crossover_type: str = "full",
+        mutation_rate: float = 0.01,
+        crossover_rate: float = 0.6
     ) -> Iterable[tuple[str, float, str]]:
         self.cipher_text = cipher_text
         self.n_population = n_population
@@ -194,7 +197,7 @@ class GeneticDecipher(Crossover, Mutation):
 
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
-        best_key = ("", -inf)
+        best_key = (CipherKey(ascii_uppercase), -inf)
 
         deciphered_text = cipher_text
         for _ in range(max_iter):
@@ -203,6 +206,6 @@ class GeneticDecipher(Crossover, Mutation):
 
             if best_idx_key[1] > best_key[1]:
                 best_key = best_idx_key
-            deciphered_text = decrypt(self.cipher_text, best_key[0])
+            deciphered_text = best_key[0].decode_cipher(self.cipher_text)
 
             yield best_key[0], best_key[1], deciphered_text

@@ -2,15 +2,15 @@ from random import randint
 from typing import Optional
 from abc import ABC, abstractmethod
 
-from gencipher.utils import InvalidInputError, InputType
+from gencipher.utils import InvalidInputError, InputType, CipherKey
 
 
 class ParentsLengthError(ValueError):
     def __init__(self) -> None:
-        """Raised when the lengths of parent strings for a crossover
+        """Raised when the lengths of the parents for a crossover
         operation are not equal.
         """
-        super().__init__("Parent strings must have equal lengths.")
+        super().__init__("Parents must have equal lengths.")
 
 
 class CrossoverType(InputType):
@@ -21,21 +21,27 @@ class CrossoverType(InputType):
 
 
 class Crossover(ABC):
+    """Abstract base class for crossover methods used in genetic
+    algorithms.
+    """
     @staticmethod
-    def OX1(parent1: str, parent2: str) -> str:
+    def OX1(parent1: CipherKey, parent2: CipherKey) -> CipherKey:
         """Performs order-one crossover (OX1) on two parent strings to
-        generate a offspring string.
+        generate an offspring string.
 
         Args:
-            parent1 (str): The first parent string used for crossover.
-            parent2 (str): The second parent string used for crossover.
+            parent1 (CipherKey): The first parent CipherKey used for
+            crossover.
+            parent2 (CipherKey): The second parent CipherKey used for
+            crossover.
 
         Raises:
             ParentsLengthError: Raised if the lengths of parent1 and
             parent2 are not equal.
 
         Returns:
-            str: The offspring string generated through order-one crossover.
+            CipherKey: The offspring generated through order-one
+            crossover.
         """
         if len(parent1) != len(parent2):
             raise ParentsLengthError()
@@ -58,19 +64,23 @@ class Crossover(ABC):
                 offspring_count += 1
             offspring_length = len(offspring)
 
-        return "".join(offspring)
+        return CipherKey("".join(offspring))
 
     @staticmethod
-    def PMX(parent1: str,
-            parent2: str,
-            start: Optional[int] = None,
-            end: Optional[int] = None) -> str:
+    def PMX(
+        parent1: CipherKey,
+        parent2: CipherKey,
+        start: Optional[int] = None,
+        end: Optional[int] = None
+    ) -> CipherKey:
         """Performs partially mapped crossover (PMX) on two parent
-        strings to generate a offspring string.
+        CipherKeys to generate an offspring CipherKey.
 
         Args:
-            parent1 (str): The first parent string used for crossover.
-            parent2 (str): The second parent string used for crossover.
+            parent1 (CipherKey): The first parent CipherKey used for
+            crossover.
+            parent2 (CipherKey): The second parent CipherKey used for
+            crossover.
             start (int, optional): First crossover point, if not
             provided, will be chosen randomly. Defaults to None.
             end (int, optional): Second crossover point, if not
@@ -81,7 +91,7 @@ class Crossover(ABC):
             parent2 are not equal.
 
         Returns:
-            str: The offspring string generated through partially mapped
+            str: The offspring generated through partially mapped
             crossover.
         """
         if len(parent1) != len(parent2):
@@ -111,23 +121,25 @@ class Crossover(ABC):
                              offspring,
                              parent2))
 
-        return "".join(offspring)
+        return CipherKey("".join(offspring))
 
     @staticmethod
-    def CX(parent1: str, parent2: str) -> str:
-        """Performs cycle crossover (CX) on two parent strings to
-        generate a offspring string.
+    def CX(parent1: CipherKey, parent2: CipherKey) -> CipherKey:
+        """Performs cycle crossover (CX) on two parent CipherKeys to
+        generate an offspring CipherKey.
 
         Args:
-            parent1 (str): The first parent string used for crossover.
-            parent2 (str): The second parent string used for crossover.
+            parent1 (CipherKey): The first parent CipherKey used for
+            crossover.
+            parent2 (CipherKey): The second parent CipherKey used for
+            crossover.
 
         Raises:
             ParentsLengthError: Raised if the lengths of parent1 and
             parent2 are not equal.
 
         Returns:
-            str: The offspring string generated through cycle crossover.
+            CipherKey: The offspring generated through cycle crossover.
         """
         if len(parent1) != len(parent2):
             raise ParentsLengthError()
@@ -141,13 +153,17 @@ class Crossover(ABC):
                 offspring[idx] = parent2[idx]
                 idx = parent1.index(parent2[idx])
 
-        return "".join(offspring)
+        return CipherKey("".join(offspring))
 
     @abstractmethod
-    def FX(self, parent1: str, parent2: str) -> str:   # pragma: no cover
+    def FX(
+        self,
+        parent1: CipherKey,
+        parent2: CipherKey
+    ) -> CipherKey:   # pragma: no cover
         """This method should implement the algorithm for a full
-        crossover function, combining attributes of both parent strings
-        to create a offspring.
+        crossover function, combining attributes of both parent
+        CipherKeys to create an offspring.
         """
         pass
 
