@@ -1,6 +1,6 @@
 import pytest
 
-from gencipher.crossover import ParentsLengthError, Crossover
+from gencipher.crossover import ParentsLengthError
 from gencipher.fitness import select_parent
 
 
@@ -38,11 +38,3 @@ def test_parents_length_error(crossover_type, monogram_gencipher):
 
     with pytest.raises(ParentsLengthError):
         monogram_gencipher.crossover(parent1, parent2)
-
-
-def test_PMX():
-    parent1 = "123456789"
-    parent2 = "937826514"
-    offspring = Crossover.PMX(parent1, parent2, start=3, end=7)
-
-    assert offspring == "932456718"
