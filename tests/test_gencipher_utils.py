@@ -5,6 +5,14 @@ from gencipher import utils
 from gencipher.fitness import Ngram
 
 
+def test_cipher_key_exceptions():
+    with pytest.raises(ValueError):
+        utils.CipherKey(1)
+
+    with pytest.raises(utils.InvalidCipherKey):
+        utils.CipherKey("test")
+
+
 def test_random_cipher_key():
     key = utils.random_cipher_key()
 
@@ -13,53 +21,53 @@ def test_random_cipher_key():
     assert set(key) == set(ascii_uppercase)
 
 
-def test_encrypt():
-    # Test with a simple substitution key
-    cipher_key = "BCDEFGHIJKLMNOPQRSTUVWXYZA"  # Rotating one letter
+def test_cipher_key_encode_cipher():
+    # Test with a simple substitution key, rotating one letter
+    cipher_key = utils.CipherKey("BCDEFGHIJKLMNOPQRSTUVWXYZA")
 
     text = "HELLO"
-    encrypted_text = utils.encrypt(text, cipher_key)
+    encrypted_text = cipher_key.encode_cipher(text)
     assert encrypted_text == "IFMMP"
 
     # Test with non-alphabetic characters
     text = "123!@#"
-    encrypted_text = utils.encrypt(text, cipher_key)
+    encrypted_text = cipher_key.encode_cipher(text)
     assert encrypted_text == "123!@#"
 
     # Test with lowercase text
     text = "world"
-    encrypted_text = utils.encrypt(text, cipher_key)
+    encrypted_text = cipher_key.encode_cipher(text)
     assert encrypted_text == "xpsme"
 
     # Test with lowercase text, uppercase text and non-alphabetic
     # characters
     text = "HELLO world!"
-    encrypted_text = utils.encrypt(text, cipher_key)
+    encrypted_text = cipher_key.encode_cipher(text)
     assert encrypted_text == "IFMMP xpsme!"
 
 
-def test_decrypt():
-    # Test with a simple substitution key
-    cipher_key = "BCDEFGHIJKLMNOPQRSTUVWXYZA"  # Rotating one letter
+def test_cipher_key_decode_cipher():
+    # Test with a simple substitution key, rotating one letter
+    cipher_key = utils.CipherKey("BCDEFGHIJKLMNOPQRSTUVWXYZA")
 
     text = "IFMMP"
-    encrypted_text = utils.decrypt(text, cipher_key)
+    encrypted_text = cipher_key.decode_cipher(text)
     assert encrypted_text == "HELLO"
 
     # Test with non-alphabetic characters
     text = "123!@#"
-    encrypted_text = utils.decrypt(text, cipher_key)
+    encrypted_text = cipher_key.decode_cipher(text)
     assert encrypted_text == "123!@#"
 
     # Test with lowercase text
     text = "xpsme"
-    encrypted_text = utils.decrypt(text, cipher_key)
+    encrypted_text = cipher_key.decode_cipher(text)
     assert encrypted_text == "world"
 
     # Test with lowercase text, uppercase text and non-alphabetic
     # characters
     text = "IFMMP xpsme!"
-    encrypted_text = utils.decrypt(text, cipher_key)
+    encrypted_text = cipher_key.decode_cipher(text)
     assert encrypted_text == "HELLO world!"
 
 
