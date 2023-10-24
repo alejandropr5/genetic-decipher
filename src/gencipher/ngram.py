@@ -64,6 +64,7 @@ class Ngram:
         """
         uppercase_text = text.upper()
         uppercase_only_text = re.sub(r'[^A-Z]', '', uppercase_text)
+        # uppercase_only_text = "".join(re.findall(r'[A-Z]', uppercase_text))
         fitness = 0.0
 
         for i in range(len(uppercase_only_text) - self.ngram_len + 1):
@@ -112,6 +113,20 @@ class Ngram:
 
         return population_fitness
 
+    def ngram_count(self, text: str) -> int:
+        """Count the number of n-grams in the given text.
+
+        Args:
+            text (str): The input text from which n-grams will be
+            counted.
+
+        Returns:
+            int: The count of n-grams ignoring non-alphabetical
+            characters.
+        """
+        alpha_text = re.sub(r'[^A-Za-z]', '', text)
+        return len(alpha_text) - self.ngram_len + 1
+
 
 def _ngrams_file_to_dictionary(
     file_path: Union[str, Path],
@@ -157,11 +172,16 @@ def _frequency_to_log_probability(
     """
     total_frequency = sum(ngrams_dictionary.values())
 
+    total_score = 0.0
     prob_dictionary = {}
     for key, value in ngrams_dictionary.items():
         prob_dictionary[key] = math.log10(value / total_frequency)
+        total_score += prob_dictionary[key] * value
 
     prob_dictionary["0"] = math.log10(0.01 / total_frequency)
+    prob_dictionary["fitness"] = total_score / total_frequency
+    print(f"{len(list(prob_dictionary.keys())[0])}-gram:",
+          prob_dictionary["fitness"])
     return prob_dictionary
 
 
