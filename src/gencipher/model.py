@@ -232,7 +232,7 @@ class GeneticDecipher(Crossover, Mutation):
 
         deciphered_text = cipher_text
         iteration = 0
-        fitness_percentage = 0
+        fitness_percentage = 0.0
         while iteration < max_iter and fitness_percentage < 1 - tolerance:
             self.population = self.evolve_population(self.population)
             best_idx_key = max(self.population.items(), key=lambda x: x[1])

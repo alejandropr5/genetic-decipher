@@ -47,7 +47,7 @@ class Ngram:
         with open(file, "rb") as file_in:
             self.scores = pickle.load(file_in)
 
-        self.ngram_len = NgramType.values().index(self.ngram_type) + 1
+        self.ngram_len: int = NgramType.values().index(self.ngram_type) + 1
 
     def compute_fitness(self, text: str) -> float:
         """Compute the fitness score of a given text based on n-gram
@@ -127,8 +127,9 @@ class Ngram:
         return len(alpha_text) - self.ngram_len + 1
 
     def fitness_percentage(self, fitness: float) -> float:
-        diff = fitness - self.scores["fitness"]
-        return 1 - (diff / self.scores["fitness"])
+        diff: float = fitness - self.scores["fitness"]
+        ngram_fitness: float = self.scores["fitness"]
+        return 1 - (diff / ngram_fitness)
 
 
 def _ngrams_file_to_dictionary(
