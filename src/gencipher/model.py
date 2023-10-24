@@ -113,6 +113,7 @@ class GeneticDecipher(Crossover, Mutation):
         self,
         cipher_text: str,
         max_iter: int = 20,
+        tolerance: float = 0.02,
         n_population: int = 100,
         mutation_type: str = "scramble",
         crossover_type: str = "full",
@@ -125,6 +126,8 @@ class GeneticDecipher(Crossover, Mutation):
             cipher_text (str): The cryptogram to be deciphered.
             max_iter (int, optional): The maximum number of iterations
             for the genetic algorithm. Defaults to 20.
+            tolerance (float, optional): The algorithm stops when the
+            fitness is within this tolerance. Defaults to 0.02
             n_population (int, optional): The size of the candidate
             population for each iteration. Defaults to 100.
             mutation_type (str, optional): The type of mutation to be
@@ -152,7 +155,7 @@ class GeneticDecipher(Crossover, Mutation):
         self.population = self.ngram.generate_population(self.cipher_text,
                                                          self.n_population)
         self.history: dict[str, list[Union[str, float]]] = {"key": [],
-                                                            "score": [],
+                                                            "fitness": [],
                                                             "text": []}
         best_key = (CipherKey(string.ascii_uppercase), -np.inf)
 
@@ -165,9 +168,17 @@ class GeneticDecipher(Crossover, Mutation):
                 best_key = best_idx_key
             deciphered_text = best_key[0].decode_cipher(self.cipher_text)
 
+            ngram_count = self.ngram.ngram_count(deciphered_text)
+            fitness_percentage = self.ngram.fitness_percentage(
+                (best_key[1] / ngram_count)
+            )
+
             self.history["key"].append(best_key[0])
-            self.history["score"].append(best_key[1])
+            self.history["fitness"].append(fitness_percentage)
             self.history["text"].append(deciphered_text)
+
+            if fitness_percentage >= 1 - tolerance:
+                break
 
         return deciphered_text
 
@@ -175,12 +186,39 @@ class GeneticDecipher(Crossover, Mutation):
         self,
         cipher_text: str,
         max_iter: int = 20,
+        tolerance: float = 0.02,
         n_population: int = 100,
         mutation_type: str = "scramble",
         crossover_type: str = "full",
         mutation_rate: float = 0.01,
         crossover_rate: float = 0.6
     ) -> Iterator[tuple[str, float, str]]:
+        """Decipher a cryptogram using a genetic algorithm.
+
+        Args:
+            cipher_text (str): The cryptogram to be deciphered.
+            max_iter (int, optional): The maximum number of iterations
+            for the genetic algorithm. Defaults to 20.
+            tolerance (float, optional): The algorithm stops when the
+            fitness is within this tolerance. Defaults to 0.02
+            n_population (int, optional): The size of the candidate
+            population for each iteration. Defaults to 100.
+            mutation_type (str, optional): The type of mutation to be
+            applied in the genetic algorithm. Defaults to "scramble."
+            crossover_type (str, optional): The type of crossover to be
+            applied in the genetic algorithm. Defaults to "full."
+            mutation_rate (float, optional): The mutation rate,
+            affecting the likelihood of applying mutation. Defaults to
+            0.01.
+            crossover_rate (float, optional): The crossover rate,
+            affecting the likelihood of applying crossover. Defaults to
+            0.6.
+
+        Yields:
+            tuple[str, float, str]: A tuple containing the best
+            deciphered key, its fitness as a percentage, and the
+            corresponding deciphered text.
+        """
         self.cipher_text = cipher_text
         self.n_population = n_population
         self._set_mutation(mutation_type)
@@ -193,7 +231,9 @@ class GeneticDecipher(Crossover, Mutation):
         best_key = (CipherKey(string.ascii_uppercase), -np.inf)
 
         deciphered_text = cipher_text
-        for _ in range(max_iter):
+        iteration = 0
+        fitness_percentage = 0
+        while iteration < max_iter and fitness_percentage < 1 - tolerance:
             self.population = self.evolve_population(self.population)
             best_idx_key = max(self.population.items(), key=lambda x: x[1])
 
@@ -201,4 +241,9 @@ class GeneticDecipher(Crossover, Mutation):
                 best_key = best_idx_key
             deciphered_text = best_key[0].decode_cipher(self.cipher_text)
 
-            yield best_key[0], best_key[1], deciphered_text
+            ngram_count = self.ngram.ngram_count(deciphered_text)
+            fitness_percentage = self.ngram.fitness_percentage(
+                (best_key[1] / ngram_count)
+            )
+            iteration += 1
+            yield best_key[0], fitness_percentage, deciphered_text

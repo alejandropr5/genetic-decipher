@@ -12,7 +12,7 @@ def test_decipher_method():
 
     deciphered_text = gencipher.decipher(cipher_text,
                                          max_iter=20,
-                                         crossover_type="partially-mapped")
+                                         tolerance=0.1)
 
     assert len(deciphered_text) == len(deciphered_text)
     assert (gencipher.ngram.compute_fitness(deciphered_text) >=

@@ -64,9 +64,8 @@ class Ngram:
         """
         uppercase_text = text.upper()
         uppercase_only_text = re.sub(r'[^A-Z]', '', uppercase_text)
-        # uppercase_only_text = "".join(re.findall(r'[A-Z]', uppercase_text))
-        fitness = 0.0
 
+        fitness = 0.0
         for i in range(len(uppercase_only_text) - self.ngram_len + 1):
             top = i + self.ngram_len
             ngram = uppercase_only_text[i:top]
@@ -126,6 +125,10 @@ class Ngram:
         """
         alpha_text = re.sub(r'[^A-Za-z]', '', text)
         return len(alpha_text) - self.ngram_len + 1
+
+    def fitness_percentage(self, fitness: float) -> float:
+        diff = fitness - self.scores["fitness"]
+        return 1 - (diff / self.scores["fitness"])
 
 
 def _ngrams_file_to_dictionary(
