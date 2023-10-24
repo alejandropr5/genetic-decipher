@@ -37,7 +37,7 @@ gencipher = ["py.typed", "data/ngrams_scores/*.dict"]
 max-line-length = 79
 
 [tool.pytest.ini_options]
-addopts = "--cov=gencipher --cov-report=html"
+addopts = "--cov=gencipher"
 testpaths = [
     "tests",
 ]
