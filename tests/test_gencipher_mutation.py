@@ -8,7 +8,7 @@ import pytest
     "scramble"
 ])
 def test_mutation_methods(mutation_type, monogram_gencipher):
-    monogram_gencipher.decipher(cipher_text="",
+    monogram_gencipher.decipher(cipher_text="a",
                                 mutation_type=mutation_type,
                                 max_iter=0)
 

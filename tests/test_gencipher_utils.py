@@ -31,10 +31,10 @@ def test_input_error(monogram_gencipher):
 
     # Test InvalidInputError in Mutation class
     with pytest.raises(InvalidInputError):
-        monogram_gencipher.decipher(cipher_text="",
+        monogram_gencipher.decipher(cipher_text="a",
                                     mutation_type=invalid_input)
 
     # Test InvalidInputError in Crossover class
     with pytest.raises(InvalidInputError):
-        monogram_gencipher.decipher(cipher_text="",
+        monogram_gencipher.decipher(cipher_text="a",
                                     crossover_type=invalid_input)

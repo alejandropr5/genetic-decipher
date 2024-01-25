@@ -30,7 +30,7 @@ def test_crossover_methods(crossover_type, monogram_gencipher):
     "full"
 ])
 def test_parents_length_error(crossover_type, monogram_gencipher):
-    monogram_gencipher.decipher(cipher_text="",
+    monogram_gencipher.decipher(cipher_text="a",
                                 crossover_type=crossover_type,
                                 max_iter=0)
     parent1 = "ABC"
