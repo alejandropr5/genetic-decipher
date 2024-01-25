@@ -1,3 +1,4 @@
+import re
 import string
 import random
 import numpy as np
@@ -6,8 +7,15 @@ from typing import Iterator, Union
 from gencipher.cipherkey import CipherKey
 from gencipher.mutation import Mutation
 from gencipher.crossover import Crossover, ParentsLengthError
-from gencipher.ngram import Ngram
+from gencipher.ngram import Ngram, NgramType
 from gencipher.utils import select_parent
+
+
+class CipherTextLengthError(ValueError):
+    """Inappropriate cipher text length."""
+    def __init__(self):
+        super().__init__("Invalid cipher text length. The cipher text must be "
+                         "longer than the n-gram selected.")
 
 
 class GeneticDecipher(Crossover, Mutation):
@@ -247,3 +255,17 @@ class GeneticDecipher(Crossover, Mutation):
             )
             iteration += 1
             yield best_key[0], fitness_percentage, deciphered_text
+
+    @property
+    def cipher_text(self):
+        return self.__cipher_text
+
+    @cipher_text.setter
+    def cipher_text(self, cipher_text):
+        Ngram_list = NgramType.values()
+        only_text = re.sub(r'[^A-Za-z]', '', cipher_text)
+
+        if len(only_text) > Ngram_list.index(self.ngram.ngram_type):
+            self.__cipher_text = cipher_text
+        else:
+            raise CipherTextLengthError
