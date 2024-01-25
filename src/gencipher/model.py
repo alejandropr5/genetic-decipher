@@ -31,92 +31,6 @@ class GeneticDecipher(Crossover, Mutation):
         """
         self.ngram = Ngram(ngram_type)
 
-    def FX(self, winner: CipherKey, loser: CipherKey) -> CipherKey:
-        """Perform a full crossover (FX) operation on two parent
-        strings to generate a offspring string.
-
-        Args:
-            winner (CipherKey): The parent with a higher fitness in
-            solving the cryptogram, used as the first parent for
-            crossover.
-            loser (CipherKey): The parent with a lower fitness in
-            solving the cryptogram, used as the second parent for
-            crossover.
-
-        Raises:
-            ParentsLengthError: Raised if the lengths of winner and
-            loser CipherKeys are not equal.
-
-        Returns:
-            CipherKey: The offspring CipherKey generated through the
-            full crossover operation.
-        """
-        if len(winner) != len(loser):
-            raise ParentsLengthError()
-
-        target_fitness = self.population[winner]
-        target_key = list(winner)
-        source_key = list(loser)
-
-        for idx in range(len(target_key)):
-            if source_key[idx] != target_key[idx]:
-                new_key = target_key[:]
-                temp_idx = new_key.index(source_key[idx])
-                new_key[idx], new_key[temp_idx] = source_key[idx], new_key[idx]
-                new_cipher_key = CipherKey("".join(new_key))
-
-                new_text = new_cipher_key.decode_cipher(self.cipher_text)
-                new_fitness = self.ngram.compute_fitness(new_text)
-                if new_fitness > target_fitness:
-                    target_key = new_key
-                    target_fitness = new_fitness
-
-        return CipherKey("".join(target_key))
-
-    def evolve_population(
-        self,
-        population: dict[CipherKey, float]
-    ) -> dict[CipherKey, float]:
-        """Evolve the population of candidate solutions through
-        crossover and mutation.
-
-        Args:
-            population (dict): A dictionary representing the current
-            population of candidate solutions, where keys are CipherKeys
-            and values are their corresponding fitness scores (float).
-
-        Returns:
-            dict: A new population of candidate solutions after applying
-            crossover and mutation, represented as a dictionary. Keys
-            are CipherKeys, and values are their updated fitness scores
-            (float).
-        """
-        new_population = {}
-        for _ in range(self.n_population):
-            key1 = select_parent(population)
-            key2 = select_parent(population)
-            if population[key1] > population[key2]:
-                winner, loser = key1, key2
-            else:
-                winner, loser = key2, key1
-            new_key = winner
-            new_fitness = fitness_target = population[winner]
-
-            if random.random() < self.crossover_rate:
-                new_key = self.crossover(winner, loser)
-                new_text = new_key.decode_cipher(self.cipher_text)
-                new_fitness = self.ngram.compute_fitness(new_text)
-                if new_fitness < fitness_target:
-                    new_key = winner
-                    new_fitness = fitness_target
-            if random.random() < self.mutation_rate:
-                new_key = self.mutation(new_key)
-                new_text = new_key.decode_cipher(self.cipher_text)
-                new_fitness = self.ngram.compute_fitness(new_text)
-            new_population[new_key] = new_fitness
-
-        return new_population
-
     def decipher(
         self,
         cipher_text: str,
@@ -255,6 +169,92 @@ class GeneticDecipher(Crossover, Mutation):
             )
             iteration += 1
             yield best_key[0], fitness_percentage, deciphered_text
+
+    def FX(self, winner: CipherKey, loser: CipherKey) -> CipherKey:
+        """Perform a full crossover (FX) operation on two parent
+        strings to generate a offspring string.
+
+        Args:
+            winner (CipherKey): The parent with a higher fitness in
+            solving the cryptogram, used as the first parent for
+            crossover.
+            loser (CipherKey): The parent with a lower fitness in
+            solving the cryptogram, used as the second parent for
+            crossover.
+
+        Raises:
+            ParentsLengthError: Raised if the lengths of winner and
+            loser CipherKeys are not equal.
+
+        Returns:
+            CipherKey: The offspring CipherKey generated through the
+            full crossover operation.
+        """
+        if len(winner) != len(loser):
+            raise ParentsLengthError()
+
+        target_fitness = self.population[winner]
+        target_key = list(winner)
+        source_key = list(loser)
+
+        for idx in range(len(target_key)):
+            if source_key[idx] != target_key[idx]:
+                new_key = target_key[:]
+                temp_idx = new_key.index(source_key[idx])
+                new_key[idx], new_key[temp_idx] = source_key[idx], new_key[idx]
+                new_cipher_key = CipherKey("".join(new_key))
+
+                new_text = new_cipher_key.decode_cipher(self.cipher_text)
+                new_fitness = self.ngram.compute_fitness(new_text)
+                if new_fitness > target_fitness:
+                    target_key = new_key
+                    target_fitness = new_fitness
+
+        return CipherKey("".join(target_key))
+
+    def evolve_population(
+        self,
+        population: dict[CipherKey, float]
+    ) -> dict[CipherKey, float]:
+        """Evolve the population of candidate solutions through
+        crossover and mutation.
+
+        Args:
+            population (dict): A dictionary representing the current
+            population of candidate solutions, where keys are CipherKeys
+            and values are their corresponding fitness scores (float).
+
+        Returns:
+            dict: A new population of candidate solutions after applying
+            crossover and mutation, represented as a dictionary. Keys
+            are CipherKeys, and values are their updated fitness scores
+            (float).
+        """
+        new_population = {}
+        for _ in range(self.n_population):
+            key1 = select_parent(population)
+            key2 = select_parent(population)
+            if population[key1] > population[key2]:
+                winner, loser = key1, key2
+            else:
+                winner, loser = key2, key1
+            new_key = winner
+            new_fitness = fitness_target = population[winner]
+
+            if random.random() < self.crossover_rate:
+                new_key = self.crossover(winner, loser)
+                new_text = new_key.decode_cipher(self.cipher_text)
+                new_fitness = self.ngram.compute_fitness(new_text)
+                if new_fitness < fitness_target:
+                    new_key = winner
+                    new_fitness = fitness_target
+            if random.random() < self.mutation_rate:
+                new_key = self.mutation(new_key)
+                new_text = new_key.decode_cipher(self.cipher_text)
+                new_fitness = self.ngram.compute_fitness(new_text)
+            new_population[new_key] = new_fitness
+
+        return new_population
 
     @property
     def cipher_text(self):
