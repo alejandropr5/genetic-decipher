@@ -18,6 +18,13 @@ class CipherTextLengthError(ValueError):
                          "longer than the n-gram selected.")
 
 
+class N_Population_Error(ValueError):
+    """Inappropriate n_population value."""
+    def __init__(self):
+        super().__init__("Invalid n_population value. Must be an integer "
+                         "greater than zero (0).")
+
+
 class GeneticDecipher(Crossover, Mutation):
     def __init__(
         self,
@@ -269,3 +276,14 @@ class GeneticDecipher(Crossover, Mutation):
             self.__cipher_text = cipher_text
         else:
             raise CipherTextLengthError
+
+    @property
+    def n_population(self):
+        return self.__n_population
+
+    @n_population.setter
+    def n_population(self, n_population):
+        if n_population > 0:
+            self.__n_population = n_population
+        else:
+            raise N_Population_Error

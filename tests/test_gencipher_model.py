@@ -1,5 +1,9 @@
 import pytest
-from gencipher.model import GeneticDecipher, CipherTextLengthError
+from gencipher.model import (
+    GeneticDecipher,
+    CipherTextLengthError,
+    N_Population_Error
+)
 
 
 def test_decipher_method():
@@ -47,3 +51,11 @@ def test_cipher_text_error():
 
     with pytest.raises(CipherTextLengthError):
         gencipher.decipher(cipher_text)
+
+
+def test_n_population_error():
+    gencipher = GeneticDecipher(ngram_type="bigram")
+    cipher_text = "ab"
+
+    with pytest.raises(N_Population_Error):
+        gencipher.decipher(cipher_text, n_population=0)
