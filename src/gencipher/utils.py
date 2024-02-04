@@ -1,6 +1,7 @@
 import enum
 import random
 import numpy as np
+from typing import Union
 
 from gencipher.cipherkey import CipherKey
 
@@ -25,7 +26,7 @@ class InvalidInputError(ValueError):
     def __init__(
         self,
         var_name: str,
-        var: InputType,
+        var: Union[InputType, str],
         var_class: type[InputType]
     ) -> None:
         super().__init__(
