@@ -29,8 +29,8 @@ class InvalidInputError(ValueError):
         var_class: type[InputType]
     ) -> None:
         super().__init__(
-            f'Invalid {var_name}: "{var}".It should be one of '
-            + ", ".join(f'"{value}"' for value in var_class.values()) + "."
+            f"Invalid {var_name}: {var}. It should be one of ["
+            + ", ".join(value for value in var_class.values()) + "]."
         )
 
 
