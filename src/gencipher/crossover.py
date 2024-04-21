@@ -147,11 +147,16 @@ class Crossover(ABC):
         length = len(parent1)
         offspring = [""] * length
 
+        p1 = parent1
+        p2 = parent2
+
         while "" in offspring:
             idx = offspring.index("")
             while offspring[idx] == "":
-                offspring[idx] = parent2[idx]
-                idx = parent1.index(parent2[idx])
+                offspring[idx] = p1[idx]
+                idx = p2.index(p1[idx])
+
+            p1, p2 = p2, p1
 
         return CipherKey("".join(offspring))
 
