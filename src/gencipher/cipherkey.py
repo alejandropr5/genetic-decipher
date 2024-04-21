@@ -7,7 +7,7 @@ class InvalidCipherKey(ValueError):
     """Inappropriate cipher key value"""
     def __init__(self):
         super().__init__("Invalid cipher key. The key must contain all"
-                         "letters of the english alphabet.")
+                         " letters of the english alphabet.")
 
 
 TCipherKey = TypeVar("TCipherKey", bound="CipherKey")
